@@ -24,3 +24,11 @@ class Store(db.Model, SerializerMixin):
     def __repr__(self):
         return f'<Store {self.id}, {self.name}>'
     
+class Note(db.model, SerializerMixin):
+    __tablename__ = 'notes'
+
+    id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String)
+    
+    def __repr__(self):
+        return f'<Note {self.id}, {self.description}>'
