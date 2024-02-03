@@ -51,4 +51,4 @@ class Note(db.Model, SerializerMixin):
     store = db.relationship('Store', back_populates='notes')
 
     def __repr__(self):
-        return f'<Note {self.id}, Item name: {self.item.name}, Store name: {self.store.name}, {self.description}>' 
+        return f'<Note {self.id}, Item name: {self.item.name}, Store name: {self.store.name}, {self.description}>'  
