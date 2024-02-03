@@ -8,14 +8,17 @@ from config import db
 class Item(db.Model, SerializerMixin):
     __tablename__ = 'items'
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, unique=True, nullable=False) #needs validation
-    category = db.Column(db.String) #needs validation
-    need = db.Column(db.Boolean, default=True, nullable=False) #needs validation
+    serialize_rules = ('-notes.item',)
 
-    #relationship mapping item to related stores
-    stores= db.relationship(
-        'Store', back_populates = 'item', cascade='all, delete-orphan')
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, unique=True, nullable=False)
+    category = db.Column(db.String)
+    need = db.Column(db.Boolean, default=True, nullable=False)
+
+    
+    notes= db.relationship('Note', back_populates = 'item')
+    
+    stores = association_proxy('notes', 'store', creator=lambda store_obj: Note(store=store_obj))
     
     @validates('name')
     def validate_name(self, key, name):
@@ -30,7 +33,7 @@ class Item(db.Model, SerializerMixin):
     
     @validates('need')
     def validate_need(self, key, need):
-        if not need:
+        if need is None:
             raise ValueError("Need is required")
         if not isinstance(need, bool):
             raise ValueError("Need must be a boolean")
@@ -43,12 +46,14 @@ class Item(db.Model, SerializerMixin):
 class Store(db.Model, SerializerMixin):
     __tablename__ = 'stores'
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, unique=True, nullable=False) #needs validation
+    serialize_rules = ('-notes.store',)
 
-    #relationship mapping store to related items
-    items=db.relationship(
-        'Item', back_populates = 'store', cascade ='all, delete-orphan')
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, unique=True, nullable=False) 
+
+    notes= db.relationship('Note', back_populates = 'store', cascade='all, delete-orphan')
+    
+    items = association_proxy('notes', 'item', creator=lambda item_obj: Note(item=item_obj))
     
     @validates('name')
     def validate_name(self, key, name):
@@ -63,12 +68,15 @@ class Store(db.Model, SerializerMixin):
 
     def __repr__(self):
         return f'<Store {self.id}, {self.name}>'
-    
+
+#association model    
 class Note(db.Model, SerializerMixin):
     __tablename__ = 'notes'
 
+    serialize_rules = ('-item.reviews','-store.reviews')
+
     id = db.Column(db.Integer, primary_key=True)
-    description = db.Column(db.String) #needs validation
+    description = db.Column(db.String) 
     
     @validates('description')
     def validate_description(self, key, description):
@@ -88,7 +96,6 @@ class Note(db.Model, SerializerMixin):
     
     #relationship mapping note to related item
     item = db.relationship('Item', back_populates='notes')
-
     #relationship mapping note to related store
     store = db.relationship('Store', back_populates='notes')
 
