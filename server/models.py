@@ -12,6 +12,10 @@ class Item(db.Model, SerializerMixin):
     category = db.Column(db.String)
     need = db.Column(db.Boolean)
 
+    #relationship mapping item to related stores
+    stores= db.relationship(
+        'Store', back_populates = "item", cascade='all, delete-orphan')
+
     def __repr__(self):
         return f'<Item {self.id}, {self.name}, Category: {self.category}, Need: {self.need}>'
 
@@ -20,6 +24,10 @@ class Store(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=False)
+
+    #relationship mapping store to related items
+    items=db.relationship(
+        'Item', back_populates = "store", cascade ='all, delete-orphan')
 
     def __repr__(self):
         return f'<Store {self.id}, {self.name}>'
