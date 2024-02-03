@@ -10,6 +10,8 @@ from faker import Faker
 from app import app
 from models import db, Item, Store, Note
 
+#with app.app_context
+
 if __name__ == '__main__':
     fake = Faker()
     with app.app_context():
