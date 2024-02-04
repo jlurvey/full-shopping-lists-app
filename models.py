@@ -84,9 +84,6 @@ class Note(db.Model, SerializerMixin):
             raise ValueError("Description is requried")
         if not isinstance(description, str):
             raise ValueError("Description must be a string")
-        existing_item = Item.query.filter(db.func.lower(Item.description) == db.func.lower(description)).first()
-        if existing_item and existing_item.id != self.id:
-            raise ValueError("Description already exists")
         return description
     
     #fk for item id
@@ -110,8 +107,11 @@ class Note(db.Model, SerializerMixin):
             store_id = value
         
         existing_note = Note.query.filter_by(item_id=item_id, store_id=store_id).first()
+        
         if existing_note and existing_note.id != self.id:
             raise ValueError("Note for this combination of Item and Store already exists")
+        
+        return value
     
     def __repr__(self):
         return f'<Note {self.id}, Item name: {self.item.name}, Store name: {self.store.name}, {self.description}>'
