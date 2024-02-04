@@ -18,12 +18,12 @@ if __name__ == '__main__':
     with app.app_context():
         
         print("Starting seed...")
-        print("Creating items")
+        print("Creating items...")
         
         #items have unique names
         items = []
         names = []
-        categories = ['grocery store','hardware store','pharmacy store','convenience store','department store']
+        categories = ['grocery store','hardware store','pharmacy','convenience store','department store']
 
         for i in range(20):
 
@@ -41,6 +41,29 @@ if __name__ == '__main__':
             items.append(item)
 
         db.session.add_all(items)
+        db.session.commit()
+
+        print("Creating stores...")
+
+        stores = []
+        names = []
+
+        for i in range(5):
+
+            name=fake.company()
+            while name in names:
+                name = fake.company()
+                names.append(name)
+
+            store = Store(name=name)
+            stores.append(store)
+
+        db.session.add_all(stores)
+        db.session.commit()
+
+
+
+            
 
 
 
