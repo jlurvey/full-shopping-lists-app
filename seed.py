@@ -1,40 +1,38 @@
 #!/usr/bin/env python3
 
 # Standard library imports
-from random import random, randint, choice as rc
+from random import randint, choice as rc
 
 # Remote library imports
 from faker import Faker
-from faker.providers import BaseProvider
 
 # Local imports
 from app import app
 from models import db, Item, Store, Note
 
 if __name__ == '__main__':
-    
+
     fake = Faker()
-    
+
     with app.app_context():
-        
+
         print("Starting seed...")
-        print("Creating items...")
-        
-        #items have unique names
+        print("Creating 20 items...")
+        # items have unique names
         items = []
-        names = []
-        categories = ['grocery store','hardware store','pharmacy','convenience store','department store']
-
+        item_names = []
+        categories = ['grocery store', 'hardware store', 'pharmacy', 'convenience store', 'department store']
+        
         for i in range(20):
-
             name = fake.word()
-            while name in names:
+
+            while name in item_names:
                 name = fake.word()
-                names.append(name)
-            
+                item_names.append(name)
+
             item = Item(
                 name=name,
-                category=random.choice(categories),
+                category=rc(categories),
                 need=fake.boolean()
             )
 
@@ -43,17 +41,16 @@ if __name__ == '__main__':
         db.session.add_all(items)
         db.session.commit()
 
-        print("Creating stores...")
-
+        print("Creating 5 stores...")
         stores = []
-        names = []
+        store_names = []
 
         for i in range(5):
+            name = fake.company()
 
-            name=fake.company()
-            while name in names:
+            while name in store_names:
                 name = fake.company()
-                names.append(name)
+                store_names.append(name)
 
             store = Store(name=name)
             stores.append(store)
@@ -61,12 +58,38 @@ if __name__ == '__main__':
         db.session.add_all(stores)
         db.session.commit()
 
+        print("Creating 15 notes...")
+        notes = []
+        existing_combo = set()
 
+        for i in range(15):
+            item = rc(items)
+            store = rc(stores)
+            description = fake.sentence()
+            combo = (item.id, store.id)
+
+            while combo in existing_combo:
+                item = rc(items)
+                store = rc(stores)
+                combo = (item.id, store.id)
+
+            existing_combo.add(combo)
+
+            note = Note(
+                description=description,
+                item_id=item.id,
+                store_id=store.id,
+            )
+
+            notes.append(note)
+        
+        db.session.add_all(notes)
+        db.session.commit()
+
+        print('Seed completed.')
 
             
 
 
 
-
-                
 
