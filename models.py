@@ -99,5 +99,19 @@ class Note(db.Model, SerializerMixin):
     #relationship mapping note to related store
     store = db.relationship('Store', back_populates='notes')
 
+    #validation that note does not exist for item and store combination already
+    @validates('item_id', 'store_id')
+    def validate_combination(self, key, value):
+        if key == 'item_id':
+            item_id = value
+            store_id = self.store_id
+        elif key == 'store_id':
+            item_id = self.item_id
+            store_id = value
+        
+        existing_note = Note.query.filter_by(item_id=item_id, store_id=store_id).first()
+        if existing_note and existing_note.id != self.id:
+            raise ValueError("Note for this combination of Item and Store already exists")
+    
     def __repr__(self):
         return f'<Note {self.id}, Item name: {self.item.name}, Store name: {self.store.name}, {self.description}>'
