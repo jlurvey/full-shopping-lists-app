@@ -15,6 +15,10 @@ if __name__ == '__main__':
     fake = Faker()
 
     with app.app_context():
+        print("Deleting all records...")
+        Item.query.delete()
+        Store.query.delete()
+        Note.query.delete()
 
         print("Starting seed...")
         print("Creating 20 items...")
@@ -87,9 +91,3 @@ if __name__ == '__main__':
         db.session.commit()
 
         print('Seed completed.')
-
-            
-
-
-
-
