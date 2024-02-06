@@ -31,6 +31,33 @@ class ItemIndex(Resource):
             items_data.append(item_data)
         return items_data, 200
     
+    def post(self):
+        json_data = request.get_json()
+        name = json_data.get('name')
+        category = json_data.get('category')
+        need = json_data.get('need')
+        
+        try:
+            new_item = Item(
+                name=name,
+                category=category,
+                need=need
+                )
+            db.session.add(new_item)
+            db.session.commit()
+            
+            item_data = {
+                'name': item.name,
+                'category': item.category,
+                'need': item.need,
+                'stores': [{'name': store.name} for store in item.stores],
+            }
+            return item_data, 201
+        
+        except ValueError as e:
+            db.session.rollback()
+            return {'error': str(e)}, 422
+
 class StoreIndex(Resource):
     def get(self):
         stores=Store.query.all()
