@@ -47,10 +47,10 @@ class ItemIndex(Resource):
             db.session.commit()
             
             item_data = {
-                'name': item.name,
-                'category': item.category,
-                'need': item.need,
-                'stores': [{'name': store.name} for store in item.stores],
+                'name': new_item.name,
+                'category': new_item.category,
+                'need': new_item.need,
+                'stores': [{'name': store.name} for store in new_item.stores],
             }
             return item_data, 201
         
