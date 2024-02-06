@@ -17,6 +17,21 @@ from models import Item, Store, Note
 def index():
     return '<h1>Project Server</h1>'
 
+class ItemIndex(Resource):
+    def get(self):
+        items = Item.query.all()
+        items_data = []
+        for item in items:
+            item_data = {
+                'name': item.name,
+                'category': item.category,
+                'need': item.need,
+                'stores': [{'name': store.name} for store in item.stores],
+            }
+            items_data.append(item_data)
+        return items_data, 200
+
+api.add_resource(ItemIndex, '/items', endpoint='items')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
