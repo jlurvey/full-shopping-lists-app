@@ -30,8 +30,21 @@ class ItemIndex(Resource):
             }
             items_data.append(item_data)
         return items_data, 200
+    
+class StoreIndex(Resource):
+    def get(self):
+        stores=Store.query.all()
+        stores_data = []
+        for store in stores:
+            store_data = {
+                'name':store.name,
+            }
+            stores_data.append(store_data)
+        return stores_data, 200
 
 api.add_resource(ItemIndex, '/items', endpoint='items')
+api.add_resource(StoreIndex,'/stores', endpoint = 'stores')
+
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
