@@ -61,8 +61,8 @@ class Store(db.Model, SerializerMixin):
             raise ValueError("Name is requried")
         if not isinstance(name, str):
             raise ValueError("Name must be a string")
-        existing_item = Item.query.filter(db.func.lower(Item.name) == db.func.lower(name)).first()
-        if existing_item and existing_item.id != self.id:
+        existing_store = Store.query.filter(db.func.lower(Store.name) == db.func.lower(name)).first()
+        if existing_store and existing_store.id != self.id:
             raise ValueError("Name already exists")
         return name
 
