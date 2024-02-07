@@ -50,7 +50,6 @@ class ItemIndex(Resource):
                 'name': new_item.name,
                 'category': new_item.category,
                 'need': new_item.need,
-                'stores': [{'name': store.name} for store in new_item.stores],
             }
             return item_data, 201
         
@@ -68,6 +67,23 @@ class StoreIndex(Resource):
             }
             stores_data.append(store_data)
         return stores_data, 200
+    
+    def post(self):
+        json_data = request.get_json()
+        name=json_data.get('name')
+
+        try:
+            new_store = Store(name=name)
+            db.session.add(new_store)
+            db.session.commit()
+
+            store_data = {'name':new_store.name}
+
+            return store_data, 201
+        
+        except ValueError as e:
+            db.session.rollback()
+            return{'error': str(e)}, 422
 
 api.add_resource(ItemIndex, '/items', endpoint='items')
 api.add_resource(StoreIndex,'/stores', endpoint = 'stores')

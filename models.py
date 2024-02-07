@@ -23,7 +23,7 @@ class Item(db.Model, SerializerMixin):
     @validates('name')
     def validate_name(self, key, name):
         if not name:
-            raise ValueError("Name is requried")
+            raise ValueError("Name is required")
         if not isinstance(name, str):
             raise ValueError("Name must be a string")
         existing_item = Item.query.filter(db.func.lower(Item.name) == db.func.lower(name)).first()
