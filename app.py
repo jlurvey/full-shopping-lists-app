@@ -3,7 +3,7 @@
 # Standard library imports
 
 # Remote library imports
-from flask import request
+from flask import jsonify, make_response, request
 from flask_restful import Resource
 
 # Local imports
@@ -32,30 +32,25 @@ class ItemIndex(Resource):
         return items_data, 200
     
     def post(self):
-        json_data = request.get_json()
-        name = json_data.get('name')
-        category = json_data.get('category')
-        need = json_data.get('need')
+        data = request.get_json()
         
         try:
             new_item = Item(
-                name=name,
-                category=category,
-                need=need
+                name = data['name'],
+                category = data['category'],
+                need = data['need'],
                 )
+            
             db.session.add(new_item)
             db.session.commit()
-            
-            item_data = {
-                'name': new_item.name,
-                'category': new_item.category,
-                'need': new_item.need,
-            }
-            return item_data, 201
+
+            return make_response(new_item.to_dict(),201)
         
         except ValueError as e:
             db.session.rollback()
             return {'error': str(e)}, 422
+        
+
 
 class StoreIndex(Resource):
     def get(self):
@@ -64,23 +59,22 @@ class StoreIndex(Resource):
         for store in stores:
             store_data = {
                 'name':store.name,
+                'items':[{'name': item.name} for item in store.items]
             }
             stores_data.append(store_data)
         return stores_data, 200
     
     def post(self):
-        json_data = request.get_json()
-        name=json_data.get('name')
+        data = request.get_json()
 
         try:
-            new_store = Store(name=name)
+            new_store = Store(name=data['name'])
+
             db.session.add(new_store)
             db.session.commit()
 
-            store_data = {'name':new_store.name}
-
-            return store_data, 201
-        
+            return make_response(new_store.to_dict(),201)
+                
         except ValueError as e:
             db.session.rollback()
             return{'error': str(e)}, 422
