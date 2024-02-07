@@ -73,7 +73,7 @@ class Store(db.Model, SerializerMixin):
 class Note(db.Model, SerializerMixin):
     __tablename__ = 'notes'
 
-    serialize_rules = ('-item.reviews','-store.reviews')
+    serialize_rules = ('-item.notes','-store.notes')
 
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String) 
