@@ -102,7 +102,18 @@ class StoreByID(Resource):
                 return make_response(store.to_dict(), 200)
         except ValueError as e:
             db.session.rollback()
-            return {'error': str(e)}, 422                    
+            return {'error': str(e)}, 422
+
+    def delete(self, id):
+        store = Store.query.filter_by(id=id).first()
+        try:
+            db.session.delete(store)
+            db.session.commit()
+            return make_response('', 204)
+        except ValueError as e:
+            db.session.rollback()
+            return {'error': str(e)}, 422
+     
 
 api.add_resource(ItemIndex, '/items', endpoint='items')
 api.add_resource(ItemByID, '/items/<int:id>', endpoint='items/<int:id>')
