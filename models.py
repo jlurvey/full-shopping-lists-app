@@ -16,7 +16,7 @@ class Item(db.Model, SerializerMixin):
     need = db.Column(db.Boolean, default=True, nullable=False)
 
     
-    notes= db.relationship('Note', back_populates = 'item')
+    notes= db.relationship('Note', back_populates = 'item', cascade='all, delete-orphan')
     
     stores = association_proxy('notes', 'store', creator=lambda store_obj: Note(store=store_obj))
     

@@ -24,19 +24,15 @@ class ItemIndex(Resource):
     
     def post(self):
         data = request.get_json()
-        
         try:
             new_item = Item(
                 name = data['name'],
                 category = data['category'],
                 need = data['need'],
                 )
-            
             db.session.add(new_item)
             db.session.commit()
-
             return make_response(new_item.to_dict(),201)
-        
         except ValueError as e:
             db.session.rollback()
             return {'error': str(e)}, 422
@@ -49,20 +45,25 @@ class ItemByID(Resource):
     def patch(self, id):
         data = request.get_json()
         item = Item.query.filter_by(id=id).first()
-
         try:
             for attr in data:
                 setattr(item, attr, data[attr])
-            
             db.session.add(item)
             db.session.commit()
-
             return make_response(item.to_dict(), 200)
-        
         except ValueError as e:
             db.session.rollback()
             return {'error': str(e)}, 422
 
+    def delete(self, id):
+        item = Item.query.filter_by(id=id).first()
+        try:
+            db.session.delete(item)
+            db.session.commit()
+            make_response('', 204)
+        except ValueError as e:
+            db.session.rollback()
+            return {'error': str(e)}, 422
 
 class StoreIndex(Resource):
     def get(self):
@@ -71,15 +72,11 @@ class StoreIndex(Resource):
     
     def post(self):
         data = request.get_json()
-
         try:
             new_store = Store(name=data['name'])
-
             db.session.add(new_store)
             db.session.commit()
-
             return make_response(new_store.to_dict(),201)
-                
         except ValueError as e:
             db.session.rollback()
             return{'error': str(e)}, 422
