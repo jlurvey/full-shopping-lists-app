@@ -90,6 +90,19 @@ class StoreByID(Resource):
     def get(self, id):
         store = Store.query.filter_by(id=id).first().to_dict()
         return make_response(jsonify(store), 200)
+    
+    def patch(self, id):
+        data=request.get_json()
+        store = Store.query.filter_by(id=id).first()
+        try:
+            for attr in data:
+                setattr(store, attr, data[attr])
+                db.session.add(store)
+                db.session.commit()
+                return make_response(store.to_dict(), 200)
+        except ValueError as e:
+            db.session.rollback()
+            return {'error': str(e)}, 422                    
 
 api.add_resource(ItemIndex, '/items', endpoint='items')
 api.add_resource(ItemByID, '/items/<int:id>', endpoint='items/<int:id>')
