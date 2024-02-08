@@ -45,7 +45,23 @@ class ItemByID(Resource):
     def get(self, id):
         item = Item.query.filter_by(id=id).first().to_dict()
         return make_response(jsonify(item), 200) 
+
+    def patch(self, id):
+        data = request.get_json()
+        item = Item.query.filter_by(id=id).first()
+
+        try:
+            for attr in data:
+                setattr(item, attr, data[attr])
+            
+            db.session.add(item)
+            db.session.commit()
+
+            return make_response(item.to_dict(), 200)
         
+        except ValueError as e:
+            db.session.rollback()
+            return {'error': str(e)}, 422
 
 
 class StoreIndex(Resource):
