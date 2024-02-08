@@ -19,17 +19,8 @@ def index():
 
 class ItemIndex(Resource):
     def get(self):
-        items = Item.query.all()
-        items_data = []
-        for item in items:
-            item_data = {
-                'name': item.name,
-                'category': item.category,
-                'need': item.need,
-                'stores': [{'name': store.name} for store in item.stores],
-            }
-            items_data.append(item_data)
-        return items_data, 200
+        items = [item.to_dict() for item in Item.query.all()]
+        return make_response(jsonify(items),200)
     
     def post(self):
         data = request.get_json()
@@ -50,19 +41,14 @@ class ItemIndex(Resource):
             db.session.rollback()
             return {'error': str(e)}, 422
         
+        
+        
 
 
 class StoreIndex(Resource):
     def get(self):
-        stores=Store.query.all()
-        stores_data = []
-        for store in stores:
-            store_data = {
-                'name':store.name,
-                'items':[{'name': item.name} for item in store.items]
-            }
-            stores_data.append(store_data)
-        return stores_data, 200
+        stores = [store.to_dict() for store in Store.query.all()]
+        return make_response(jsonify(stores), 200)
     
     def post(self):
         data = request.get_json()
