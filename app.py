@@ -41,7 +41,10 @@ class ItemIndex(Resource):
             db.session.rollback()
             return {'error': str(e)}, 422
         
-        
+class ItemByID(Resource):
+    def get(self, id):
+        item = Item.query.filter_by(id=id).first().to_dict()
+        return make_response(jsonify(item), 200) 
         
 
 
@@ -66,6 +69,7 @@ class StoreIndex(Resource):
             return{'error': str(e)}, 422
 
 api.add_resource(ItemIndex, '/items', endpoint='items')
+api.add_resource(ItemByID, '/items/<int:id>', endpoint='items/<int:id>')
 api.add_resource(StoreIndex,'/stores', endpoint = 'stores')
 
 
