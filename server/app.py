@@ -122,9 +122,9 @@ class NoteIndex(Resource):
             data = request.get_json()
             try:
                 new_note = Note(
-                    description=data['description']
-                    item_id=data['item_id']
-                    store_id=data['store_id']
+                    description=data['description'],
+                    item_id=data['item_id'],
+                    store_id=data['store_id'],
                 )
                 db.session.add(new_note)
                 db.session.commit()
