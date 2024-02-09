@@ -118,10 +118,20 @@ class NoteIndex(Resource):
     def get(self):    
         notes = [note.to_dict() for note in Note.query.all()]
         return make_response(jsonify(notes), 200)
-    """ def post(self):
-            data = request.get_json() """
-            
-    
+    def post(self):
+            data = request.get_json()
+            try:
+                new_note = Note(
+                    description=data['description']
+                    item_id=data['item_id']
+                    store_id=data['store_id']
+                )
+                db.session.add(new_note)
+                db.session.commit()
+                return make_response(new_note.to_dict(), 201)
+            except ValueError as e:
+                db.session.rollback()
+                return {'error': str(e)}, 422
 
 api.add_resource(ItemIndex, '/items', endpoint='items')
 api.add_resource(ItemByID, '/items/<int:id>', endpoint='items/<int:id>')

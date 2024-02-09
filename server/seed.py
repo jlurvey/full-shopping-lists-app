@@ -25,8 +25,9 @@ if __name__ == '__main__':
         # items have unique names
         items = []
         item_names = []
-        categories = ['grocery store', 'hardware store', 'pharmacy', 'convenience store', 'department store']
-        
+        categories = ['grocery store', 'hardware store',
+                      'pharmacy', 'convenience store', 'department store']
+
         for i in range(20):
             name = fake.word()
 
@@ -86,7 +87,7 @@ if __name__ == '__main__':
             )
 
             notes.append(note)
-        
+
         db.session.add_all(notes)
         db.session.commit()
 
