@@ -83,7 +83,7 @@ class Note(db.Model, SerializerMixin):
     @validates('description')
     def validate_description(self, key, description):
         if not description:
-            raise ValueError("Description is requried")
+            raise ValueError("Description is required")
         if not isinstance(description, str):
             raise ValueError("Description must be a string")
         return description
@@ -100,21 +100,22 @@ class Note(db.Model, SerializerMixin):
 
     #validation that note does not exist for item and store combination already
     @validates('item_id', 'store_id')
-    def validate_combination(self, key, value):
-        if key == 'item_id':
-            item_id = value
-            store_id = self.store_id
-        elif key == 'store_id':
-            item_id = self.item_id
-            store_id = value
+    def validate_ids(self, key, value):
+        if not value:
+            raise ValueError(f"{key} is required")
+        elif not isinstance(value, int):
+            raise ValueError(f"{key} must be an integer")
+        if self.id is not None:
+            if key == 'item_id':
+                item_id = value
+                store_id = self.store_id
+            elif key == 'store_id':
+                item_id = self.item_id
+                store_id = value
+            existing_note = Note.query.filter_by(item_id=item_id, store_id=store_id).first()
+            if existing_note and existing_note.id != self.id:
+                raise ValueError("Note for this combination of Item and Store already exists")
+            return value
         
-        existing_note = Note.query.filter_by(item_id=item_id, store_id=store_id).first()
-        
-        if existing_note and existing_note.id != self.id:
-            raise ValueError("Note for this combination of Item and Store already exists")
-        
-        return value
-    
     def __repr__(self):
         return f'<Note {self.id}, Item name: {self.item.name}, Store name: {self.store.name}, {self.description}>'
-    
