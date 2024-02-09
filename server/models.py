@@ -16,14 +16,14 @@ class Item(db.Model, SerializerMixin):
     need = db.Column(db.Boolean, default=True, nullable=False)
 
     
-    notes= db.relationship('Note', back_populates = 'item')
+    notes= db.relationship('Note', back_populates = 'item', cascade='all, delete-orphan')
     
     stores = association_proxy('notes', 'store', creator=lambda store_obj: Note(store=store_obj))
     
     @validates('name')
     def validate_name(self, key, name):
         if not name:
-            raise ValueError("Name is requried")
+            raise ValueError("Name is required")
         if not isinstance(name, str):
             raise ValueError("Name must be a string")
         existing_item = Item.query.filter(db.func.lower(Item.name) == db.func.lower(name)).first()
@@ -43,6 +43,8 @@ class Item(db.Model, SerializerMixin):
     def __repr__(self):
         return f'<Item {self.id}, {self.name}, Category: {self.category}, Need: {self.need}>'
 
+
+
 class Store(db.Model, SerializerMixin):
     __tablename__ = 'stores'
 
@@ -61,8 +63,8 @@ class Store(db.Model, SerializerMixin):
             raise ValueError("Name is requried")
         if not isinstance(name, str):
             raise ValueError("Name must be a string")
-        existing_item = Item.query.filter(db.func.lower(Item.name) == db.func.lower(name)).first()
-        if existing_item and existing_item.id != self.id:
+        existing_store = Store.query.filter(db.func.lower(Store.name) == db.func.lower(name)).first()
+        if existing_store and existing_store.id != self.id:
             raise ValueError("Name already exists")
         return name
 
@@ -73,7 +75,7 @@ class Store(db.Model, SerializerMixin):
 class Note(db.Model, SerializerMixin):
     __tablename__ = 'notes'
 
-    serialize_rules = ('-item.reviews','-store.reviews')
+    serialize_rules = ('-item.notes','-store.notes')
 
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String) 
