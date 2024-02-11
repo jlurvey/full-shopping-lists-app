@@ -1,8 +1,8 @@
 """Initial migration
 
-Revision ID: 14262f111a11
+Revision ID: 1f246e701fa0
 Revises: 
-Create Date: 2024-02-03 09:05:10.660390
+Create Date: 2024-02-11 09:04:18.089380
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '14262f111a11'
+revision = '1f246e701fa0'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -22,7 +22,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('category', sa.String(), nullable=True),
-    sa.Column('need', sa.Boolean(), nullable=True),
+    sa.Column('need', sa.Boolean(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('name')
     )
@@ -35,8 +35,8 @@ def upgrade():
     op.create_table('notes',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
-    sa.Column('item_id', sa.Integer(), nullable=True),
-    sa.Column('store_id', sa.Integer(), nullable=True),
+    sa.Column('item_id', sa.Integer(), nullable=False),
+    sa.Column('store_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['item_id'], ['items.id'], name=op.f('fk_notes_item_id_items')),
     sa.ForeignKeyConstraint(['store_id'], ['stores.id'], name=op.f('fk_notes_store_id_stores')),
     sa.PrimaryKeyConstraint('id')

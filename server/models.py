@@ -15,7 +15,6 @@ class Item(db.Model, SerializerMixin):
     category = db.Column(db.String)
     need = db.Column(db.Boolean, default=True, nullable=False)
 
-    
     notes= db.relationship('Note', back_populates = 'item', cascade='all, delete-orphan')
     
     stores = association_proxy('notes', 'store', creator=lambda store_obj: Note(store=store_obj))
@@ -75,10 +74,17 @@ class Store(db.Model, SerializerMixin):
 class Note(db.Model, SerializerMixin):
     __tablename__ = 'notes'
 
-    serialize_rules = ('-item.notes','-store.notes')
+    #serialize_rules = ('-item.notes','-store.notes')
 
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String) 
+
+    item_id = db.Column(db.Integer, db.ForeignKey('items.id'),nullable = False)
+    item = db.relationship('Item', back_populates='notes')
+
+    store_id = db.Column(db.Integer, db.ForeignKey('stores.id'),nullable = False)
+    store = db.relationship('Store', back_populates='notes')
+
     
     @validates('description')
     def validate_description(self, key, description):
@@ -87,35 +93,25 @@ class Note(db.Model, SerializerMixin):
         if not isinstance(description, str):
             raise ValueError("Description must be a string")
         return description
-    
-    #fk for item id
-    item_id= db.Column(db.Integer, db.ForeignKey('items.id'))
-    #fk for store id
-    store_id = db.Column(db.Integer, db.ForeignKey('stores.id'))
-    
-    #relationship mapping note to related item
-    item = db.relationship('Item', back_populates='notes')
-    #relationship mapping note to related store
-    store = db.relationship('Store', back_populates='notes')
 
-    #validation that note does not exist for item and store combination already
     @validates('item_id', 'store_id')
     def validate_ids(self, key, value):
-        if not value:
+        if value is None:
             raise ValueError(f"{key} is required")
         elif not isinstance(value, int):
             raise ValueError(f"{key} must be an integer")
+        
         if self.id is not None:
-            if key == 'item_id':
-                item_id = value
-                store_id = self.store_id
-            elif key == 'store_id':
-                item_id = self.item_id
-                store_id = value
-            existing_note = Note.query.filter_by(item_id=item_id, store_id=store_id).first()
+            existing_note = Note.query.filter_by(item_id=self.item_id, store_id=self.store_id).first()
             if existing_note and existing_note.id != self.id:
                 raise ValueError("Note for this combination of Item and Store already exists")
-            return value
+        
+        if key == 'item_id':
+            Item.query.get(value)
+        elif key == 'store_id':
+            Store.query.get(value)
+
+        return value
         
     def __repr__(self):
-        return f'<Note {self.id}, Item name: {self.item.name}, Store name: {self.store.name}, {self.description}>'
+        return f'<Note {self.id}, Item: {self.item.id}, Store: {self.store.id}, {self.description}>'

@@ -33,7 +33,7 @@ if __name__ == '__main__':
 
             while name in item_names:
                 name = fake.word()
-                item_names.append(name)
+            item_names.append(name)
 
             item = Item(
                 name=name,
@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
             while name in store_names:
                 name = fake.company()
-                store_names.append(name)
+            store_names.append(name)
 
             store = Store(name=name)
             stores.append(store)
@@ -64,31 +64,29 @@ if __name__ == '__main__':
         db.session.commit()
 
         print("Creating 15 notes...")
-        notes = []
-        existing_combo = set()
 
-        for i in range(15):
+        items = Item.query.all()
+        stores = Store.query.all()
+
+        notes = []
+
+        while len(notes) < 15:
             item = rc(items)
             store = rc(stores)
-            description = fake.sentence()
-            combo = (item.id, store.id)
 
-            while combo in existing_combo:
-                item = rc(items)
-                store = rc(stores)
-                combo = (item.id, store.id)
+            existing_note = Note.query.filter_by(item_id=item.id, store_id=store.id).first()
 
-            existing_combo.add(combo)
+            if existing_note:
+                print(f"Note already exists for item {item.id} at store {store.id}")
+                continue
 
             note = Note(
-                description=description,
                 item_id=item.id,
                 store_id=store.id,
+                description=fake.text()
             )
 
+            db.session.add(note)
             notes.append(note)
 
-        db.session.add_all(notes)
         db.session.commit()
-
-        print('Seed completed.')
