@@ -74,7 +74,7 @@ class Store(db.Model, SerializerMixin):
 class Note(db.Model, SerializerMixin):
     __tablename__ = 'notes'
 
-    #serialize_rules = ('-item.notes','-store.notes')
+    serialize_rules = ('-item.notes','-store.notes')
 
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String) 
@@ -101,10 +101,10 @@ class Note(db.Model, SerializerMixin):
         elif not isinstance(value, int):
             raise ValueError(f"{key} must be an integer")
         
-        if self.id is not None:
-            existing_note = Note.query.filter_by(item_id=self.item_id, store_id=self.store_id).first()
-            if existing_note and existing_note.id != self.id:
-                raise ValueError("Note for this combination of Item and Store already exists")
+        existing_note = Note.query.filter_by(item_id=value if key == 'item_id' else self.item_id,
+                                             store_id=value if key == 'store_id' else self.store_id).first()
+        if existing_note and existing_note.id != self.id:
+            raise ValueError("Note for this combination of Item and Store already exists")
         
         if key == 'item_id':
             Item.query.get(value)

@@ -77,7 +77,7 @@ if __name__ == '__main__':
             existing_note = Note.query.filter_by(item_id=item.id, store_id=store.id).first()
 
             if existing_note:
-                print(f"Note already exists for item {item.id} at store {store.id}")
+                #print(f"Note already exists for item {item.id} at store {store.id}")
                 continue
 
             note = Note(
