@@ -138,6 +138,18 @@ class NoteById(Resource):
     def get(self, id):
         note = check_id(Note, id)
         return make_response(jsonify(note.to_dict()), 200)
+    def patch(self, id):
+        data=request.get_json()
+        note = check_id(Note, id)
+        try:
+            for attr in data:
+                setattr(note, attr, data[attr])
+                db.session.add(note)
+                db.session.commit()
+                return make_response(note.to_dict(), 200)
+        except Exception as e:
+            db.session.rollback()
+            return handle_error(e)
     
 
 
