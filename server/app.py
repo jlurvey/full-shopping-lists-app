@@ -41,7 +41,7 @@ class ItemIndex(Resource):
             return handle_error(e)
         
 
-class ItemByID(Resource):
+class ItemById(Resource):
     def get(self, id):
         item = check_id(Item, id)
         return make_response(jsonify(item.to_dict()), 200)
@@ -87,7 +87,7 @@ class StoreIndex(Resource):
             return handle_error(e)
 
 
-class StoreByID(Resource):
+class StoreById(Resource):
     def get(self, id):
         store = check_id(Store, id)
         return make_response(jsonify(store.to_dict()), 200)
@@ -133,12 +133,20 @@ class NoteIndex(Resource):
         except Exception as e:
             db.session.rollback()
             return handle_error(e)
+        
+class NoteById(Resource):
+    def get(self, id):
+        note = check_id(Note, id)
+        return make_response(jsonify(note.to_dict()), 200)
+    
+
 
 api.add_resource(ItemIndex, '/items', endpoint='items')
-api.add_resource(ItemByID, '/items/<int:id>', endpoint='items/<int:id>')
+api.add_resource(ItemById, '/items/<int:id>', endpoint='items/<int:id>')
 api.add_resource(StoreIndex, '/stores', endpoint='stores')
-api.add_resource(StoreByID, '/stores/<int:id>', endpoint='stores/<int:id>')
+api.add_resource(StoreById, '/stores/<int:id>', endpoint='stores/<int:id>')
 api.add_resource(NoteIndex, '/notes', endpoint='notes')
+api.add_resource(NoteById, '/notes/<int:id>', endpoint='notes/<int:id>')
 
 def handle_error(e):
     error_message = str(e)
