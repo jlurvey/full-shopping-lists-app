@@ -150,6 +150,15 @@ class NoteById(Resource):
         except Exception as e:
             db.session.rollback()
             return handle_error(e)
+    def delete(self, id):
+        note = check_id(Note, id)
+        try:
+            db.session.delete(note)
+            db.session.commit()
+            return make_response('', 204)
+        except Exception as e:
+            db.session.rollback()
+            return handle_error(e)
     
 
 
