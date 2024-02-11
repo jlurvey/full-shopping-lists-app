@@ -27,66 +27,51 @@ if __name__ == '__main__':
         item_names = []
         categories = ['grocery store', 'hardware store',
                       'pharmacy', 'convenience store', 'department store']
-
         for i in range(20):
             name = fake.word()
-
             while name in item_names:
                 name = fake.word()
             item_names.append(name)
-
             item = Item(
                 name=name,
                 category=rc(categories),
                 need=fake.boolean()
             )
-
             items.append(item)
-
         db.session.add_all(items)
         db.session.commit()
 
         print("Creating 5 stores...")
         stores = []
         store_names = []
-
         for i in range(5):
             name = fake.company()
-
             while name in store_names:
                 name = fake.company()
             store_names.append(name)
-
             store = Store(name=name)
             stores.append(store)
-
         db.session.add_all(stores)
         db.session.commit()
 
         print("Creating 15 notes...")
-
         items = Item.query.all()
         stores = Store.query.all()
-
         notes = []
-
         while len(notes) < 15:
             item = rc(items)
             store = rc(stores)
-
-            existing_note = Note.query.filter_by(item_id=item.id, store_id=store.id).first()
-
+            existing_note = Note.query.filter_by(
+                item_id=item.id, store_id=store.id).first()
             if existing_note:
-                #print(f"Note already exists for item {item.id} at store {store.id}")
+                # print(f"Note already exists for item {item.id} at store {store.id}")
                 continue
-
             note = Note(
                 item_id=item.id,
                 store_id=store.id,
                 description=fake.text()
             )
-
             db.session.add(note)
             notes.append(note)
-
         db.session.commit()
+        print("Seed complete.")

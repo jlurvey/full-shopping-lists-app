@@ -13,8 +13,6 @@ from config import app, db, api
 from models import Item, Store, Note
 
 # Views go here!
-
-
 @app.route('/')
 def index():
     return '<h1>Project Server</h1>'
@@ -39,13 +37,13 @@ class ItemIndex(Resource):
         except Exception as e:
             db.session.rollback()
             return handle_error(e)
-        
+
 
 class ItemById(Resource):
     def get(self, id):
         item = check_id(Item, id)
         return make_response(jsonify(item.to_dict()), 200)
-            
+
     def patch(self, id):
         data = request.get_json()
         item = check_id(Item, id)
@@ -91,9 +89,9 @@ class StoreById(Resource):
     def get(self, id):
         store = check_id(Store, id)
         return make_response(jsonify(store.to_dict()), 200)
-    
+
     def patch(self, id):
-        data=request.get_json()
+        data = request.get_json()
         store = check_id(Store, id)
         try:
             for attr in data:
@@ -104,7 +102,7 @@ class StoreById(Resource):
         except Exception as e:
             db.session.rollback()
             return handle_error(e)
-        
+
     def delete(self, id):
         store = check_id(Store, id)
         try:
@@ -115,10 +113,12 @@ class StoreById(Resource):
             db.session.rollback()
             return handle_error(e)
 
+
 class NoteIndex(Resource):
-    def get(self):    
+    def get(self):
         notes = [note.to_dict() for note in Note.query.all()]
         return make_response(jsonify(notes), 200)
+
     def post(self):
         data = request.get_json()
         try:
@@ -133,13 +133,15 @@ class NoteIndex(Resource):
         except Exception as e:
             db.session.rollback()
             return handle_error(e)
-        
+
+
 class NoteById(Resource):
     def get(self, id):
         note = check_id(Note, id)
         return make_response(jsonify(note.to_dict()), 200)
+
     def patch(self, id):
-        data=request.get_json()
+        data = request.get_json()
         note = check_id(Note, id)
         try:
             for attr in data:
@@ -150,6 +152,7 @@ class NoteById(Resource):
         except Exception as e:
             db.session.rollback()
             return handle_error(e)
+
     def delete(self, id):
         note = check_id(Note, id)
         try:
@@ -159,7 +162,6 @@ class NoteById(Resource):
         except Exception as e:
             db.session.rollback()
             return handle_error(e)
-    
 
 
 api.add_resource(ItemIndex, '/items', endpoint='items')
@@ -169,6 +171,7 @@ api.add_resource(StoreById, '/stores/<int:id>', endpoint='stores/<int:id>')
 api.add_resource(NoteIndex, '/notes', endpoint='notes')
 api.add_resource(NoteById, '/notes/<int:id>', endpoint='notes/<int:id>')
 
+# Handles BadRequests, KeyErrors, ValueErrors
 def handle_error(e):
     error_message = str(e)
     status_code = 500
@@ -178,19 +181,19 @@ def handle_error(e):
     elif isinstance(e, KeyError):
         error_message = f'Missing key: {str(e)}'
         status_code = 400
-    elif isinstance(e, ValueError):        
+    elif isinstance(e, ValueError):
         error_message = str(e)
         status_code = 422
-
     return make_response(jsonify({'error': error_message}), status_code)
 
+# For all ById resources, check id exists, return error message if not
 def check_id(model, id):
     obj = model.query.filter_by(id=id).first()
     if not obj:
         raise NotFound(f'{model.__name__} {id} does not exist')
     return obj
 
-#App level error handler for all HTTP errors
+# App level error handler for all HTTP errors
 @app.errorhandler(HTTPException)
 def handle_http_exception(e):
     return make_response(jsonify({'error': e.description if e.description else 'Internal Server Error'}), e.code)
