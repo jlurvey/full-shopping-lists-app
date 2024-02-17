@@ -1,3 +1,4 @@
+import axios from 'axios'
 import {
     FETCH_ITEMS_REQUEST,
     FETCH_ITEMS_SUCCESS,
@@ -72,6 +73,17 @@ export const deleteItemsFailure = (error) => ({
     payload: error, 
 });
 
+const BASE_URL = 'http://localhost:5555';
 
-
+export const fetchItems = () => {
+    return async (dispatch) => {
+        dispatch(fetchItemsRequest());
+        try {
+            const resp = await axios.get(`${BASE_URL}/items`);
+            dispatch(fetchItemsSuccess(resp.data));
+        } catch (error) {
+            dispatch(fetchItemsFailure(error.message));
+        }
+    };
+};
 
