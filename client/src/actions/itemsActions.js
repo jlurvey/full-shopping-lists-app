@@ -28,47 +28,47 @@ export const fetchItemsFailure = (error) => ({
     payload: error,
 });
 
-export const addItemsRequest = (item) => ({
+export const addItemRequest = (item) => ({
     type: ADD_ITEM_REQUEST,
     payload: item,
 });
 
-export const addItemsSuccess = (item) => ({
+export const addItemSuccess = (item) => ({
     type: ADD_ITEM_SUCCESS,
     payload: item,
 });
 
-export const addItemsFailure = (error) => ({
+export const addItemFailure = (error) => ({
     type: ADD_ITEM_FAILURE,
     payload: error, 
 });
 
-export const updateItemsRequest = (item) => ({
+export const updateItemRequest = (item) => ({
     type: UPDATE_ITEM_REQUEST,
     payload: item,
 });
 
-export const updateItemsSuccess = (item) => ({
+export const updateItemSuccess = (item) => ({
     type: UPDATE_ITEM_SUCCESS,
     payload: item,
 });
 
-export const updateItemsFailure = (error) => ({
+export const updateItemFailure = (error) => ({
     type: UPDATE_ITEM_FAILURE,
     payload: error, 
 });
 
-export const deleteItemsRequest = (itemId) => ({
+export const deleteItemRequest = (itemId) => ({
     type: DELETE_ITEM_REQUEST,
     payload: itemId,
 });
 
-export const deleteItemsSuccess = (itemId) => ({
+export const deleteItemSuccess = (itemId) => ({
     type: DELETE_ITEM_SUCCESS,
     payload: itemId,
 });
 
-export const deleteItemsFailure = (error) => ({
+export const deleteItemFailure = (error) => ({
     type: DELETE_ITEM_FAILURE,
     payload: error, 
 });
@@ -86,4 +86,32 @@ export const fetchItems = () => {
         }
     };
 };
+
+export const addItem = (item) => {
+    return async (dispatch) => {
+        dispatch(addItemRequest());
+        try {
+            const resp = await axios.get(`${BASE_URL}/items`, item);
+            dispatch(addItemSuccess(resp.data));
+        } catch (error) {
+            dispatch(addItemFailure(error.message));
+        }
+    };
+};
+
+export const updateItem = (itemId, updatedItem) => {
+    return async (dispatch) => {
+        dispatch(updateItemRequest());
+        try {
+            const resp = await axios.get(`${BASE_URL}/items/${itemId}`, updatedItem);
+            dispatch(updateItemSuccess(resp.data));
+        } catch (error) {
+            dispatch(updateItemFailure(error.message));
+        }
+    };
+};
+
+
+
+
 
