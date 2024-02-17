@@ -28,9 +28,9 @@ export const fetchItemsFailure = (error) => ({
     payload: error,
 });
 
-export const addItemRequest = (item) => ({
+export const addItemRequest = () => ({
     type: ADD_ITEM_REQUEST,
-    payload: item,
+
 });
 
 export const addItemSuccess = (item) => ({
@@ -43,9 +43,8 @@ export const addItemFailure = (error) => ({
     payload: error, 
 });
 
-export const updateItemRequest = (item) => ({
+export const updateItemRequest = () => ({
     type: UPDATE_ITEM_REQUEST,
-    payload: item,
 });
 
 export const updateItemSuccess = (item) => ({
@@ -58,9 +57,8 @@ export const updateItemFailure = (error) => ({
     payload: error, 
 });
 
-export const deleteItemRequest = (itemId) => ({
+export const deleteItemRequest = () => ({
     type: DELETE_ITEM_REQUEST,
-    payload: itemId,
 });
 
 export const deleteItemSuccess = (itemId) => ({
@@ -91,7 +89,7 @@ export const addItem = (item) => {
     return async (dispatch) => {
         dispatch(addItemRequest());
         try {
-            const resp = await axios.get(`${BASE_URL}/items`, item);
+            const resp = await axios.post(`${BASE_URL}/items`, item);
             dispatch(addItemSuccess(resp.data));
         } catch (error) {
             dispatch(addItemFailure(error.message));
@@ -103,7 +101,7 @@ export const updateItem = (itemId, updatedItem) => {
     return async (dispatch) => {
         dispatch(updateItemRequest());
         try {
-            const resp = await axios.get(`${BASE_URL}/items/${itemId}`, updatedItem);
+            const resp = await axios.patch(`${BASE_URL}/items/${itemId}`, updatedItem);
             dispatch(updateItemSuccess(resp.data));
         } catch (error) {
             dispatch(updateItemFailure(error.message));
@@ -111,7 +109,14 @@ export const updateItem = (itemId, updatedItem) => {
     };
 };
 
-
-
-
-
+export const deleteItem = (itemId) => {
+    return async (dispatch) => {
+        dispatch(deleteItemRequest());
+        try {
+            await axios.delete(`${BASE_URL}/items/${itemId}`);
+            dispatch(deleteItemSuccess(itemId));
+        } catch (error) {
+            dispatch(deleteItemFailure(error.message));
+        }
+    };
+};
