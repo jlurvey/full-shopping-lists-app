@@ -12,7 +12,7 @@ import {
     DELETE_ITEM_REQUEST,
     DELETE_ITEM_SUCCESS,
     DELETE_ITEM_FAILURE,
-  } from './actionTypes';
+} from './actionTypes';
 
 export const fetchItemsRequest = () => ({
     type: FETCH_ITEMS_REQUEST,
@@ -30,7 +30,6 @@ export const fetchItemsFailure = (error) => ({
 
 export const addItemRequest = () => ({
     type: ADD_ITEM_REQUEST,
-
 });
 
 export const addItemSuccess = (item) => ({
@@ -40,7 +39,7 @@ export const addItemSuccess = (item) => ({
 
 export const addItemFailure = (error) => ({
     type: ADD_ITEM_FAILURE,
-    payload: error, 
+    payload: error,
 });
 
 export const updateItemRequest = () => ({
@@ -54,7 +53,7 @@ export const updateItemSuccess = (item) => ({
 
 export const updateItemFailure = (error) => ({
     type: UPDATE_ITEM_FAILURE,
-    payload: error, 
+    payload: error,
 });
 
 export const deleteItemRequest = () => ({
@@ -68,7 +67,7 @@ export const deleteItemSuccess = (itemId) => ({
 
 export const deleteItemFailure = (error) => ({
     type: DELETE_ITEM_FAILURE,
-    payload: error, 
+    payload: error,
 });
 
 const BASE_URL = 'http://localhost:5555';
