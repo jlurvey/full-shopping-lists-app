@@ -11,7 +11,7 @@ import {
     DELETE_ITEM_REQUEST,
     DELETE_ITEM_SUCCESS,
     DELETE_ITEM_FAILURE,
-  } from '../src/actions/actionTypes';
+  } from '../actions/actionTypes.js';
 
   const initialState = {
     items: [],
@@ -34,7 +34,7 @@ import {
             return {
                 ...state,
                 items: action.payload,
-                laoding: false,
+                loading: false,
                 error: null
                 };
         case ADD_ITEM_SUCCESS:
@@ -55,7 +55,7 @@ import {
             return {
                 ...state,
                 items: state.items.filter(item => item.id !== action.payload),
-                laoding: false,
+                loading: false,
                 error: null,
             };
         case FETCH_ITEMS_FAILURE:
