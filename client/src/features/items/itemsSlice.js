@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, applyMiddleware } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk} from '@reduxjs/toolkit'
 import axios from 'axios'
 
 const initialState = {
@@ -27,4 +27,34 @@ export const updateItem = createAsyncThunk('items/updateItem', async ({itemId, u
 export const deleteItem = createAsyncThunk('items/deleteItem', async (itemId) => {
     await axios.delete(`${API_URL}/items/${itemId}`);
     return itemId
+});
+
+const itemsSlice = createSlice({
+    name: 'items',
+    initialState,
+    reducers : {},
+    extraReducers(builder) {
+        builder
+        .addCase(fetchItems.pending, (state, action) => {
+            state.status = 'loading'
+        })
+        .addCase(fetchItems.fulfilled, (state, action) => {
+            state.status = 'succeeded'
+            state.items = state.items.concat(action.payload)
+        })
+        .addCase(fetchItems.fulfilled, (state, action) => {
+            state.status = 'failed'
+            state.items = action.error.message
+        })
+        .addCase(addItem.fulfilled, (state, action) => {
+            state.items.push(action.payload)
+        })
+        .addCase(updateItem.fulfilled, (state, action) => {
+            const updatedItem = action.payload;
+            state.items = state.items.map(item => (item.id === updatedItem.id ? updatedItem : item));
+        })
+        .addCase(deleteItem.fulfilled, (state, action) => {
+            state.items = state.items.filter(item => item.id !== action.payload);
+        });
+    },
 });
