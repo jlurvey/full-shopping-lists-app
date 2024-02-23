@@ -58,3 +58,8 @@ const itemsSlice = createSlice({
         });
     },
 });
+
+export default itemsSlice.reducer
+
+export const selectAllItems = (state) => state.items.items
+export const selectItemById = (state, itemId) => state.items.items.find((item) => item.id ===itemId)
