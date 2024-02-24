@@ -17,14 +17,27 @@ function ItemsList() {
         }
     }, [itemStatus, dispatch])
 
+    let content
+    console.log(itemStatus)
+
+    if (itemStatus === 'succeeded') {
+        console.log(items)
+        const sortedItems = [...items]
+            .sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
+            .sort((a, b) => b.need - a.need)
+        content = sortedItems.map((item) => (
+            <Item
+                key={item.id}
+                item={item}
+            />
+        ))
+    } else if (itemStatus === 'failed') {
+        content = <div>{error}</div>
+    }
+
     return (
         <div>
-            {items.map((item) => (
-                <Item
-                    key={item.id}
-                    item={item}
-                />
-            ))}
+            {content}
         </div>
     );
 }
