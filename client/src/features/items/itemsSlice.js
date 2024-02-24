@@ -1,3 +1,5 @@
+//src/features/items/itemsSlice.js
+
 import { createSlice, createAsyncThunk} from '@reduxjs/toolkit'
 import axios from 'axios'
 
@@ -42,7 +44,7 @@ const itemsSlice = createSlice({
             state.status = 'succeeded'
             state.items = state.items.concat(action.payload)
         })
-        .addCase(fetchItems.fulfilled, (state, action) => {
+        .addCase(fetchItems.rejected, (state, action) => {
             state.status = 'failed'
             state.items = action.error.message
         })

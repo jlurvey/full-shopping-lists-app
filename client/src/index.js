@@ -1,4 +1,4 @@
-//source/index.js
+//src/index.js
 
 import React from "react";
 import App from "./components/App";
