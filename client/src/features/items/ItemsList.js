@@ -2,10 +2,10 @@
 
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux"
-
 import { selectAllItems, fetchItems } from "./itemsSlice";
+import Item from "./Item"
 
-export const ItemsList = () => {
+function ItemsList() {
     const dispatch = useDispatch()
     const items = useSelector(selectAllItems)
     const itemStatus = useSelector((state) => state.items.status)
@@ -17,11 +17,14 @@ export const ItemsList = () => {
         }
     }, [itemStatus, dispatch])
 
-    let content = items
-    console.log(content)
-
     return (
         <div>
+            {items.map((item) => (
+                <Item
+                    key={item.id}
+                    item={item}
+                />
+            ))}
         </div>
     );
 }

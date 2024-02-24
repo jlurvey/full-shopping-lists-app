@@ -1,0 +1,170 @@
+:root {
+    --lightblue: rgb(200, 233, 255);
+    --lightorange: rgb(255, 220, 114);
+    --orange: rgb(255, 150, 78);
+    --blue: rgb(0, 33, 165);
+    --lightgray: rgb(231, 231, 231);
+    --gray: rgb(150, 150, 150);
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--lightgray);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 18px;
+}
+
+.App {
+    margin: 2rem auto;
+    padding: .5rem;
+    max-width: 600px;
+    background: white;
+    box-shadow: 4px 4px 10px rgba(33, 33, 33, 0.2);
+    border-radius: 10px;
+}
+
+.navbar {
+    padding: 0.25rem;
+    color: white;
+    background: var(--blue);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-radius: 5px;
+    margin: .25rem;
+    max-width: 800px;
+
+}
+
+a {
+    color: var(--white);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+a:visited {
+    color: var(--white);
+}
+
+a:hover {
+    color: var(--lightblue);
+}
+
+header {
+    margin: auto;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: larger;
+    font-weight: bold;
+}
+
+form.add {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--lightorange);
+    margin: .25rem;
+    border-radius: 5px;
+}
+
+form.add input,
+form.add select {
+    flex: 1;
+    margin-right: .5rem;
+}
+
+form.addItem button[type="submit"] {
+    flex: 0;
+}
+
+li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--lightblue);
+    margin: .25rem;
+    border-radius: 5px;
+}
+
+.Home {
+    display: flex;
+    align-items: center;
+    background: var(--lightblue);
+    margin: .25rem;
+    border-radius: 5px;
+    justify-content: center;
+}
+
+li.doNotNeed {
+    text-decoration: line-through;
+    background: var(--gray);
+}
+
+li span {
+    flex: 1;
+}
+
+button {
+    padding: 0.1rem .5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: .25rem;
+    border: none;
+}
+
+button.add {
+    background: var(--orange);
+    color: white;
+}
+
+button.doNotNeed {
+    width: 7rem;
+    background: var(--gray);
+    color: white;
+}
+
+button.need {
+    width: 7rem;
+    background: var(--blue);
+    color: white;
+}
+
+
+
+button.delete {
+    background: red;
+    color: white;
+}
+
+
+
+button.lists {
+    background: var(--orange);
+    color: white;
+}
+
+.navbar a.active {
+    background: var(--lightblue);
+    border-radius: 5px;
+    color: var(--blue);
+    padding-right: .25rem;
+    padding-left: .25rem
+
+}
+
+.listButtons {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-around;
+}
