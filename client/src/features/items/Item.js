@@ -1,7 +1,4 @@
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux"
-
-import { selectAllItems, fetchItems } from "./itemsSlice";
+import React from "react";
 
 function Item({ item }) {
     return (

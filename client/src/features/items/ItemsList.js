@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux"
 import { selectAllItems, fetchItems } from "./itemsSlice";
 import Item from "./Item"
+import AddItemForm from "./AddItemForm";
 
 function ItemsList() {
     const dispatch = useDispatch()
@@ -18,10 +19,8 @@ function ItemsList() {
     }, [itemStatus, dispatch])
 
     let content
-    console.log(itemStatus)
 
     if (itemStatus === 'succeeded') {
-        console.log(items)
         const sortedItems = [...items]
             .sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
             .sort((a, b) => b.need - a.need)
@@ -37,6 +36,7 @@ function ItemsList() {
 
     return (
         <div>
+            <AddItemForm />
             {content}
         </div>
     );

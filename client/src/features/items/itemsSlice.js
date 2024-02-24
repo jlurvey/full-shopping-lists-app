@@ -1,6 +1,6 @@
 //src/features/items/itemsSlice.js
 
-import { createSlice, createAsyncThunk} from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk, rejectedWithValue} from '@reduxjs/toolkit'
 import axios from 'axios'
 
 const initialState = {
@@ -17,8 +17,13 @@ export const fetchItems = createAsyncThunk('items/fetchItems', async () => {
 });
 
 export const addItem = createAsyncThunk('items/addItem', async (initialItem) => {
-    const resp = await axios.post(`${API_URL}/items`, initialItem)
-    return resp.data
+    try {
+        const resp = await axios.post(`${API_URL}/items`, initialItem)
+        return resp.data
+    } catch(error) {
+        console.error(error.response.data);
+        throw error.response.data;
+    }
 });
 
 export const updateItem = createAsyncThunk('items/updateItem', async ({itemId, updatedItem}) => {
@@ -50,6 +55,10 @@ const itemsSlice = createSlice({
         })
         .addCase(addItem.fulfilled, (state, action) => {
             state.items.push(action.payload)
+        })
+        .addCase(addItem.rejected, (state, action) => {
+            state.status = 'failed';
+            state.error = action.payload;
         })
         .addCase(updateItem.fulfilled, (state, action) => {
             const updatedItem = action.payload;
