@@ -1,6 +1,6 @@
 //src/features/items/itemsSlice.js
 
-import { createSlice, createAsyncThunk, rejectedWithValue} from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 
 const initialState = {
@@ -20,15 +20,21 @@ export const addItem = createAsyncThunk('items/addItem', async (initialItem) => 
     try {
         const resp = await axios.post(`${API_URL}/items`, initialItem)
         return resp.data
-    } catch(error) {
+    } catch (error) {
         console.error(error.response.data);
         throw error.response.data;
     }
 });
 
-export const updateItem = createAsyncThunk('items/updateItem', async ({itemId, updatedItem}) => {
-    const resp = await axios.patch(`${API_URL}/items/${itemId}`, updatedItem);
-    return resp.data;
+export const updateItem = createAsyncThunk('items/updateItem', async ({ itemId, updatedItem }) => {
+    try {
+        console.log(updatedItem)
+        const resp = await axios.patch(`${API_URL}/items/${itemId}`, updatedItem);
+        return resp.data;
+    } catch (error) {
+        console.error(error.response.data);
+        throw error.response.data;
+    }
 });
 
 export const deleteItem = createAsyncThunk('items/deleteItem', async (itemId) => {
@@ -39,38 +45,38 @@ export const deleteItem = createAsyncThunk('items/deleteItem', async (itemId) =>
 const itemsSlice = createSlice({
     name: 'items',
     initialState,
-    reducers : {},
+    reducers: {},
     extraReducers(builder) {
         builder
-        .addCase(fetchItems.pending, (state, action) => {
-            state.status = 'loading'
-        })
-        .addCase(fetchItems.fulfilled, (state, action) => {
-            state.status = 'succeeded'
-            state.items = state.items.concat(action.payload)
-        })
-        .addCase(fetchItems.rejected, (state, action) => {
-            state.status = 'failed'
-            state.items = action.error.message
-        })
-        .addCase(addItem.fulfilled, (state, action) => {
-            state.items.push(action.payload)
-        })
-        .addCase(addItem.rejected, (state, action) => {
-            state.status = 'failed';
-            state.error = action.payload;
-        })
-        .addCase(updateItem.fulfilled, (state, action) => {
-            const updatedItem = action.payload;
-            state.items = state.items.map(item => (item.id === updatedItem.id ? updatedItem : item));
-        })
-        .addCase(deleteItem.fulfilled, (state, action) => {
-            state.items = state.items.filter(item => item.id !== action.payload);
-        });
+            .addCase(fetchItems.pending, (state, action) => {
+                state.status = 'loading'
+            })
+            .addCase(fetchItems.fulfilled, (state, action) => {
+                state.status = 'succeeded'
+                state.items = state.items.concat(action.payload)
+            })
+            .addCase(fetchItems.rejected, (state, action) => {
+                state.status = 'failed'
+                state.items = action.error.message
+            })
+            .addCase(addItem.fulfilled, (state, action) => {
+                state.items.push(action.payload)
+            })
+            .addCase(addItem.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.payload;
+            })
+            .addCase(updateItem.fulfilled, (state, action) => {
+                const updatedItem = action.payload;
+                state.items = state.items.map(item => (item.id === updatedItem.id ? updatedItem : item));
+            })
+            .addCase(deleteItem.fulfilled, (state, action) => {
+                state.items = state.items.filter(item => item.id !== action.payload);
+            });
     },
 });
 
 export default itemsSlice.reducer
 
 export const selectAllItems = (state) => state.items.items
-export const selectItemById = (state, itemId) => state.items.items.find((item) => item.id ===itemId)
+export const selectItemById = (state, itemId) => state.items.items.find((item) => item.id === itemId)

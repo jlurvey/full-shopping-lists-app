@@ -21,7 +21,6 @@ function AddItemForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(addRequestStatus)
         if (canAdd) {
             try {
                 setAddRequestStatus('pending')

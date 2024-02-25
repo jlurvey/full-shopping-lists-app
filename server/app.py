@@ -97,9 +97,9 @@ class StoreById(Resource):
         try:
             for attr in data:
                 setattr(store, attr, data[attr])
-                db.session.add(store)
-                db.session.commit()
-                return make_response(store.to_dict(), 200)
+            db.session.add(store)
+            db.session.commit()
+            return make_response(store.to_dict(), 200)
         except Exception as e:
             db.session.rollback()
             return handle_error(e)
@@ -147,9 +147,9 @@ class NoteById(Resource):
         try:
             for attr in data:
                 setattr(note, attr, data[attr])
-                db.session.add(note)
-                db.session.commit()
-                return make_response(note.to_dict(), 200)
+            db.session.add(note)
+            db.session.commit()
+            return make_response(note.to_dict(), 200)
         except Exception as e:
             db.session.rollback()
             return handle_error(e)
