@@ -9,8 +9,6 @@ const initialState = {
     error: null,
 }
 
-item
-
 const API_URL = 'http://localhost:5555'
 
 export const fetchStores = createAsyncThunk('stores/fetchStores', async () => {
@@ -44,3 +42,36 @@ export const deleteStore = createAsyncThunk('stores/deleteStore', async (storeId
     return storeId
 });
 
+const storesSlice = createSlice({
+    name: 'stores',
+    initialState,
+    reducers: {},
+    extraReducers(builder) {
+        builder
+            .addCase(fetchStores.pending, (state, action) => {
+                state.status = 'loading'
+            })
+            .addCase(fetchStores.fulfilled, (state, action) => {
+                state.status = 'succeeded'
+                state.stores = state.stores.concat(action.payload)
+            })
+            .addCase(fetchStores.rejected, (state, action) => {
+                state.status = 'failed'
+                state.stores = action.error.message
+            })
+            .addCase(addStore.fulfilled, (state, action) => {
+                state.stores.push(action.payload)
+            })
+            .addCase(addStore.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.payload;
+            })
+            .addCase(updateStore.fulfilled, (state, action) => {
+                const updatedStore = action.payload;
+                state.stores = state.stores.map(store => (store.id === updatedStore.id ? updatedStore : store));
+            })
+            .addCase(deleteStore.fulfilled, (state, action) => {
+                state.stores = state.stores.filter(store => store.id !== action.payload);
+            });
+    },
+});
