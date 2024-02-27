@@ -2,14 +2,25 @@
 
 import React, { useEffect, useState } from "react";
 import "../App.css"
-import { Switch, Route } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
+import NavBar from "./NavBar";
 import ItemsList from "../features/items/ItemsList";
+
 
 function App() {
     return (
         <div className="App">
-            <h1>Project Client</h1>
-            <ItemsList />
+            <header>Shopping Lists</header>
+            <NavBar/>
+            <Switch>
+                <Route path='/items'>
+                    <ItemsList />
+                </Route>
+                <Route path ='/stores'>
+                    {/* <StoresList /> */}
+                </Route>
+            </Switch>
+            
         </div>
     )
 }
