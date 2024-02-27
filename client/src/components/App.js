@@ -5,6 +5,7 @@ import "../App.css"
 import { Route, Switch } from "react-router-dom";
 import NavBar from "./NavBar";
 import ItemsList from "../features/items/ItemsList";
+import StoresList from "../features/stores/StoresList";
 
 
 function App() {
@@ -17,7 +18,7 @@ function App() {
                     <ItemsList />
                 </Route>
                 <Route path ='/stores'>
-                    {/* <StoresList /> */}
+                    <StoresList />
                 </Route>
             </Switch>
             

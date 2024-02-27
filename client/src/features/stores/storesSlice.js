@@ -75,3 +75,8 @@ const storesSlice = createSlice({
             });
     },
 });
+
+export default storesSlice.reducer
+
+export const selectAllStores = (state) => state.stores.stores
+export const selectStoreById = (state, storeId) => state.stores.stores.find((store) => store.id === storeId)
