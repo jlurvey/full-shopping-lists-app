@@ -3,7 +3,8 @@ import { deleteItem, updateItem } from "./itemsSlice";
 import { useDispatch } from "react-redux";
 
 function Item({ item }) {
-    
+
+    console.log(item)    
 
     const dispatch = useDispatch();
 

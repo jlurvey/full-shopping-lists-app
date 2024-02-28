@@ -6,7 +6,7 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux"
 import { selectAllStores, fetchStores } from "./storesSlice";
 import Store from "./Store"
-import AddStoreForm from "./AddStoreForm";
+import AddStoreForm from "./AddStoreForm.js";
 
 function StoresList() {
     const dispatch = useDispatch()
@@ -38,7 +38,7 @@ function StoresList() {
 
     return (
         <div>
-            {/* <AddStoreForm /> */}
+            <AddStoreForm />
             {content}
         </div>
     );

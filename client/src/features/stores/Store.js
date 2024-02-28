@@ -1,9 +1,10 @@
 import React from "react";
-import { deleteStore, updateStore } from "./storesSlice";
+import { deleteStore } from "./storesSlice";
 import { useDispatch } from "react-redux";
 
 function Store({ store }) {
     
+    console.log(store)
 
     const dispatch = useDispatch();
 
