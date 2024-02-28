@@ -28,7 +28,6 @@ export const addItem = createAsyncThunk('items/addItem', async (initialItem) => 
 
 export const updateItem = createAsyncThunk('items/updateItem', async ({ itemId, updatedItem }) => {
     try {
-        console.log(updatedItem)
         const resp = await axios.patch(`${API_URL}/items/${itemId}`, updatedItem);
         return resp.data;
     } catch (error) {

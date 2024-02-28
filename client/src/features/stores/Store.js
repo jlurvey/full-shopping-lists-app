@@ -4,8 +4,6 @@ import { useDispatch } from "react-redux";
 
 function Store({ store }) {
     
-    console.log(store)
-
     const dispatch = useDispatch();
 
     const handleDelete = async () => {
