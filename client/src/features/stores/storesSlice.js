@@ -7,12 +7,13 @@ const initialState = {
     stores: [],
     status: 'idle',
     error: null,
+    selectedStore: null
 }
 
 const API_URL = 'http://localhost:5555'
 
 export const fetchStores = createAsyncThunk('stores/fetchStores', async () => {
-    const resp = await axios.get(`${API_URL}/stores`)
+    const resp = await axios.get(`${API_URL}/stores`);
     return resp.data
 });
 
@@ -45,7 +46,11 @@ export const deleteStore = createAsyncThunk('stores/deleteStore', async (storeId
 const storesSlice = createSlice({
     name: 'stores',
     initialState,
-    reducers: {},
+    reducers: {
+        setSelectedStore: (state, action) => {
+            state.selectedStore = action.payload;
+        }
+    },
     extraReducers(builder) {
         builder
             .addCase(fetchStores.pending, (state, action) => {
@@ -77,6 +82,8 @@ const storesSlice = createSlice({
 });
 
 export default storesSlice.reducer
+
+export const {setSelectedStore} = storesSlice.actions
 
 export const selectAllStores = (state) => state.stores.stores
 export const selectStoreById = (state, storeId) => state.stores.stores.find((store) => store.id === storeId)

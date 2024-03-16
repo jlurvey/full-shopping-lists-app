@@ -6,6 +6,7 @@ import { Route, Switch } from "react-router-dom";
 import NavBar from "./NavBar";
 import ItemsList from "../features/items/ItemsList";
 import StoresList from "../features/stores/StoresList";
+import Lists from "../features/notes/Lists";
 
 
 function App() {
@@ -19,6 +20,9 @@ function App() {
                 </Route>
                 <Route path ='/stores'>
                     <StoresList />
+                </Route>
+                <Route path ='/lists'>
+                    <Lists />
                 </Route>
             </Switch>
             

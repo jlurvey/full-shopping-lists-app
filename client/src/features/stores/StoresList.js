@@ -1,7 +1,5 @@
 //src/features/stores/StoresList.js
 
-//src/features/items/itemsList.js
-
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux"
 import { selectAllStores, fetchStores } from "./storesSlice";

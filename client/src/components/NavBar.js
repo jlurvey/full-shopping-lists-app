@@ -6,6 +6,7 @@ function NavBar() {
         <div className="navbar">
             <NavLink to='/items' exact activeClassName="active">Items</NavLink>
             <NavLink to='/stores' exact activeClassName="active">Stores</NavLink>
+            <NavLink to='/lists' exact activeClassName="active">Lists</NavLink>
         </div>
     );
 }
