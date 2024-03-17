@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux"
 import { selectAllItems, fetchItems } from "../items/itemsSlice";
 import { selectAllStores, fetchStores, setSelectedStore } from "../stores/storesSlice";
 import ListsItem from "./ListsItem";
+import ListsForm from "./ListsForm";
 
 function Lists() {
     const dispatch = useDispatch()
@@ -32,6 +33,8 @@ function Lists() {
         }
     }, [selectedStore, stores, dispatch]);
 
+    console.log(selectedStore)
+
     let content
 
     if (itemStatus === 'succeeded' && storeStatus === 'succeeded' && selectedStore) {
@@ -58,6 +61,10 @@ function Lists() {
 
     return (
         <div>
+            <ListsForm
+                stores={[...stores].sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))}
+                selectedStore={selectedStore}
+            />
             {content}
         </div>
     )
