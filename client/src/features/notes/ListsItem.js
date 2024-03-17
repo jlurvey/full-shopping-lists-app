@@ -2,32 +2,31 @@ import React from "react";
 import { deleteItem, updateItem } from "../items/itemsSlice";
 import { useDispatch } from "react-redux";
 
-function ListsItem({ note }) {
+function ListsItem({ item, description }) {
 
     const dispatch = useDispatch();
 
     const handleDelete = async () => {
-        await dispatch(deleteItem(note.item.id))
+        await dispatch(deleteItem(item.id))
     };
 
     const handleNeedChange = async () => {
-        console.log(note.item.need)
-        console.log(note.item.id)
-        const updatedItem = { need: !note.item.need }
-        await dispatch(updateItem({ itemId: note.item.id, updatedItem }))
+        const updatedItem = { need: !item.need }
+        await dispatch(updateItem({ itemId: item.id, updatedItem }))
     };
 
+
     return (
-        <li className={note.item.need ? 'need' : 'doNotNeed'}>
-            <span>{note.item.name}</span>
-            <span>{note.item.category}</span>
-            <span>{note.description}</span>
+        <li className={item.need ? 'need' : 'doNotNeed'}>
+            <span>{item.name}</span>
+            <span>{item.category}</span>
+            <span>{description}</span>
             <div>
                 <button
-                    className={note.item.need ? 'need' : 'doNotNeed'}
+                    className={item.need ? 'need' : 'doNotNeed'}
                     onClick={handleNeedChange}
                 >
-                    {note.item.need ? 'Need' : 'Do not need'}
+                    {item.need ? 'Need' : 'Do not need'}
                 </button>
                 <button
                     className='delete'

@@ -17,7 +17,6 @@ function Lists() {
     const notes = useSelector(selectAllNotes)
     const noteStatus = useSelector((state) => state.notes.status)
     const notesError = useSelector((state) => state.notes.error)
-    const selectedNote = useSelector((state) => state.notes.selectedNote)
 
 
     useEffect(() => {
@@ -35,21 +34,20 @@ function Lists() {
 
     useEffect(() => {
         if (!selectedStore && stores.length > 0) {
-            dispatch(setSelectedStore(stores[0]));
+            dispatch(setSelectedStore(stores[1]));
         }
     }, [selectedStore, stores, dispatch]);
 
     let content
 
     if (noteStatus === 'succeeded' && storeStatus === 'succeeded' && selectedStore) {
-        const filteredNotes = [...notes]
-            .filter(note => note.store.id === selectedStore.id)
-            .sort((a, b) => a.item.name.toUpperCase().localeCompare(b.item.name.toUpperCase()))
-            .sort((a, b) => b.item.need - a.item.need)
-        content = filteredNotes.map((note) => (
+        const filteredItems = [...items]
+            .filter(item => item.notes.some(note => note.store.id === selectedStore.id))
+        content = filteredItems.map((item) => (
             <ListsItem
-                key={note.id}
-                note={note} 
+                key={item.id}
+                item={item}
+                description={item.notes.find(note => note.store.id === selectedStore.id).description}
             />
         ))
 

@@ -12,6 +12,8 @@ function ItemsList() {
     const itemStatus = useSelector((state) => state.items.status)
     const error = useSelector((state) => state.items.error)
 
+    console.log(itemStatus)
+
     useEffect(() => {
         if (itemStatus === 'idle') {
             dispatch(fetchItems())
