@@ -6,8 +6,7 @@ import { Route, Switch } from "react-router-dom";
 import NavBar from "./NavBar";
 import ItemsList from "../features/items/ItemsList";
 import StoresList from "../features/stores/StoresList";
-import Lists from "../features/notes/Lists";
-
+import Lists from "../features/lists/Lists";
 
 function App() {
     return (

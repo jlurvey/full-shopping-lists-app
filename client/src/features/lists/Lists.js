@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux"
 import { selectAllItems, fetchItems } from "../items/itemsSlice";
 import { selectAllStores, fetchStores, setSelectedStore } from "../stores/storesSlice";
-import { selectAllNotes, fetchNotes } from "./notesSlice";
 import ListsItem from "./ListsItem";
 
 function Lists() {
@@ -14,9 +13,6 @@ function Lists() {
     const storeStatus = useSelector((state) => state.stores.status)
     const storesError = useSelector((state) => state.stores.error)
     const selectedStore = useSelector((state) => state.stores.selectedStore)
-    const notes = useSelector(selectAllNotes)
-    const noteStatus = useSelector((state) => state.notes.status)
-    const notesError = useSelector((state) => state.notes.error)
 
 
     useEffect(() => {
@@ -26,11 +22,8 @@ function Lists() {
         if (storeStatus === 'idle') {
             dispatch(fetchStores())
         }
-        if (noteStatus === 'idle') {
-            dispatch(fetchNotes())
-        }
 
-    }, [itemStatus, storeStatus, noteStatus, dispatch]);
+    }, [itemStatus, storeStatus, dispatch]);
 
     useEffect(() => {
         if (!selectedStore && stores.length > 0) {
@@ -41,7 +34,7 @@ function Lists() {
 
     let content
 
-    if (noteStatus === 'succeeded' && storeStatus === 'succeeded' && selectedStore) {
+    if (itemStatus === 'succeeded' && storeStatus === 'succeeded' && selectedStore) {
         const filteredItems = [...items]
             .filter(item => item.notes.some(note => note.store.id === selectedStore.id))
             .sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
