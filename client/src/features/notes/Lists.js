@@ -34,7 +34,8 @@ function Lists() {
 
     useEffect(() => {
         if (!selectedStore && stores.length > 0) {
-            dispatch(setSelectedStore(stores[1]));
+            const sortedStores = [...stores].sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
+            dispatch(setSelectedStore(sortedStores[0]));
         }
     }, [selectedStore, stores, dispatch]);
 
@@ -43,6 +44,8 @@ function Lists() {
     if (noteStatus === 'succeeded' && storeStatus === 'succeeded' && selectedStore) {
         const filteredItems = [...items]
             .filter(item => item.notes.some(note => note.store.id === selectedStore.id))
+            .sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
+            .sort((a, b) => b.need - a.need)
         content = filteredItems.map((item) => (
             <ListsItem
                 key={item.id}
