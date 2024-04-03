@@ -1,28 +1,34 @@
-//src/features/items/ListsForm.js
+//src/features/items/AddToStoreForm.js
 
 import React, { useState } from "react";
 import { useDispatch } from "react-redux"
-import { addItem, } from "../items/itemsSlice";
-import { addNote, } from "../notes/notesSlice";
-import { setSelectedStore } from "../stores/storesSlice";
+import { addNote } from "../notes/notesSlice";
+import { selectAllStores } from "../stores/storesSlice";
 
-function ListsForm({ stores, selectedStore }) {
+function ListsForm({ item, stores }) {
 
-    const [name, setName] = useState('');
-    const [category, setCategory] = useState('')
+    //stores needs to be rendered in ItemsList
+    
+    const dispatch = useDispatch()
+
+    const dStore = [...stores].sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase())) // test store dropdown
+
     const [description, setDescription] = useState('')
+    const [dropdownStore, setDropdownStore] = useState('')
+
+    //after component renders
+    //[...stores].sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
+
     const [addRequestStatus, setAddRequestStatus] = useState('idle')
 
-
-    const dispatch = useDispatch()
-    const handleNameChange = (e) => setName(e.target.value)
-    const handleCategoryChange = (e) => setCategory(e.target.value)
     const handleDescriptionChange = (e) => setDescription(e.target.value)
-    const handleStoreChange = (e) => dispatch(setSelectedStore(stores.find(store => store.id === parseInt(e.target.value))))
+    const handleDropdownStoreChange = (e) => setDropdownStore(e.target.value)
 
-    const canAdd = [name, category, description].every(Boolean) && addRequestStatus === 'idle'
 
-    const handleSubmit = async (e) => {
+
+    const canAdd = [description, dropdownStore].every(Boolean) && addRequestStatus === 'idle'
+
+    /* const handleSubmit = async (e) => {
         e.preventDefault();
         if (canAdd) {
             try {
@@ -42,7 +48,7 @@ function ListsForm({ stores, selectedStore }) {
                 setAddRequestStatus('idle')
             }
         }
-    }
+    } */
 
     return (
         <div>
@@ -50,13 +56,13 @@ function ListsForm({ stores, selectedStore }) {
                 className='add'
                 onSubmit={handleSubmit}>
                 <label>
-                    Filter By Store:
+                    Store:
                     <select
-                        form='addItem'
+                        form='addItemToStore'
                         type='select'
                         name='store'
-                        value={selectedStore ? selectedStore.id : ''}
-                        onChange={handleStoreChange}
+                        value={dropdownStore}
+                        onChange={handleDropdownStoreChange}
                     >
                         {stores.map((store) => (
                             <option
@@ -68,20 +74,6 @@ function ListsForm({ stores, selectedStore }) {
                         ))}
                     </select>
                 </label>
-                Item Name:
-                <input
-                    type='text'
-                    name='name'
-                    value={name}
-                    onChange={handleNameChange}
-                />
-                Category:
-                <input
-                    type='text'
-                    name='category'
-                    value={category}
-                    onChange={handleCategoryChange}
-                />
                 Note:
                 <input
                     type='text'
