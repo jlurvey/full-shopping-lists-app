@@ -3,52 +3,44 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux"
 import { addNote } from "../notes/notesSlice";
-import { selectAllStores } from "../stores/storesSlice";
 
-function ListsForm({ item, stores }) {
+function AddToStoreForm({ item, stores }) {
 
-    //stores needs to be rendered in ItemsList
+    const formStores = [...stores].sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
     
     const dispatch = useDispatch()
 
-    const dStore = [...stores].sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase())) // test store dropdown
-
     const [description, setDescription] = useState('')
-    const [dropdownStore, setDropdownStore] = useState('')
+    const [formStore, setFormStore] = useState(formStores[0].id)
 
-    //after component renders
-    //[...stores].sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
+    console.log(formStore)
 
     const [addRequestStatus, setAddRequestStatus] = useState('idle')
 
     const handleDescriptionChange = (e) => setDescription(e.target.value)
-    const handleDropdownStoreChange = (e) => setDropdownStore(e.target.value)
+    const handleFormStoreChange = (e) => setFormStore(parseInt(e.target.value))
 
+    const canAdd = [item.id, description, formStore].every(Boolean) && addRequestStatus === 'idle'
 
-
-    const canAdd = [description, dropdownStore].every(Boolean) && addRequestStatus === 'idle'
-
-    /* const handleSubmit = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (canAdd) {
             try {
                 setAddRequestStatus('pending')
-                const addedItem = await dispatch(addItem({ name, category, need: true })).unwrap()
                 await dispatch(addNote({
                     description,
-                    store_id: selectedStore.id,
-                    item_id: addedItem.id
+                    store_id: formStore,
+                    item_id: item.id
                 })).unwrap()
-                setName('')
-                setCategory('')
                 setDescription('')
+                setFormStore(formStores[0].id)
             } catch (error) {
                 console.error('Item not added to store:', error)
             } finally {
                 setAddRequestStatus('idle')
             }
         }
-    } */
+    }
 
     return (
         <div>
@@ -61,10 +53,10 @@ function ListsForm({ item, stores }) {
                         form='addItemToStore'
                         type='select'
                         name='store'
-                        value={dropdownStore}
-                        onChange={handleDropdownStoreChange}
+                        value={formStore}
+                        onChange={handleFormStoreChange}
                     >
-                        {stores.map((store) => (
+                        {formStores.map((store) => (
                             <option
                                 key={store.id}
                                 value={store.id}
@@ -92,4 +84,4 @@ function ListsForm({ item, stores }) {
     )
 };
 
-export default ListsForm
+export default AddToStoreForm

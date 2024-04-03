@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
+import AddToStoreForm from "./AddToStoreForm";
 import { deleteItem, updateItem } from "./itemsSlice";
 import { useDispatch } from "react-redux";
 
-function Item({ item }) {
+function Item({ item, stores }) {
 
     const dispatch = useDispatch();
+
+    const [showForm, setShowForm] = useState(false);
 
     const handleDelete = async () => {
         await dispatch(deleteItem(item.id))
@@ -13,6 +16,10 @@ function Item({ item }) {
     const handleNeedChange = async () => {
         const updatedItem = { need: !item.need }
         await dispatch(updateItem({ itemId: item.id, updatedItem }))
+    };
+
+    const handleAddToStore = () => {
+        setShowForm(true);
     };
 
 
@@ -37,7 +44,11 @@ function Item({ item }) {
             </span>
 
             <div>
-                <button>Add to Store</button>
+                <button
+                    onClick={handleAddToStore}
+                >
+                    Add to Store
+                </button>
                 <button
                     className={item.need ? 'need' : 'doNotNeed'}
                     onClick={handleNeedChange}
@@ -51,6 +62,14 @@ function Item({ item }) {
                     X
                 </button>
             </div>
+
+            {showForm && (
+                <AddToStoreForm
+                    item={item}
+                    stores={stores}
+                    onClose={() => setShowForm(false)}
+                />
+            )}
         </li>
     );
 }

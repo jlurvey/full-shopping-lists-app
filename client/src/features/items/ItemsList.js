@@ -3,6 +3,7 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux"
 import { selectAllItems, fetchItems } from "./itemsSlice";
+import { fetchStores, selectAllStores } from "../stores/storesSlice";
 import Item from "./Item"
 import AddItemForm from "./AddItemForm";
 
@@ -10,13 +11,19 @@ function ItemsList() {
     const dispatch = useDispatch()
     const items = useSelector(selectAllItems)
     const itemStatus = useSelector((state) => state.items.status)
-    const error = useSelector((state) => state.items.error)
+    const itemError = useSelector((state) => state.items.error)
+    const stores = useSelector(selectAllStores)
+    const storeStatus = useSelector((state) => state.stores.status)
+    const storeError = useSelector((state) => state.stores.error)
 
     useEffect(() => {
         if (itemStatus === 'idle') {
             dispatch(fetchItems())
         }
-    }, [itemStatus, dispatch])
+        if (storeStatus === 'idle') {
+            dispatch(fetchStores())
+        }
+    }, [itemStatus, storeStatus, dispatch])
 
     let content
 
@@ -28,10 +35,11 @@ function ItemsList() {
             <Item
                 key={item.id}
                 item={item}
+                stores={stores}
             />
         ))
     } else if (itemStatus === 'failed') {
-        content = <div>{error}</div>
+        content = <div>{itemError}</div>
     }
 
     return (
