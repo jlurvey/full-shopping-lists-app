@@ -1,13 +1,17 @@
 //src/features/notes/notesSlice.js
 
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk, createEntityAdapter } from '@reduxjs/toolkit'
 import axios from 'axios'
+import { updateItem } from '../items/itemsSlice'
 
-const initialState = {
-    notes: [],
+const notesAdapter = createEntityAdapter({
+    selectId: note => note.id,
+});
+
+const initialState = notesAdapter.getInitialState({
     status: 'idle',
     error: null,
-}
+});
 
 const API_URL = 'http://localhost:5555'
 
@@ -16,10 +20,11 @@ export const fetchNotes = createAsyncThunk('notes/fetchNotes', async () => {
     return resp.data
 });
 
-export const addNote = createAsyncThunk('notes/addNote', async (initialNote) => {
+export const addNote = createAsyncThunk('notes/addNote', async (initialNote, { dispatch }) => {
     try {
-        const resp = await axios.post(`${API_URL}/notes`, initialNote)
-        return resp.data
+        const resp = await axios.post(`${API_URL}/notes`, initialNote);
+        await dispatch(updateItem({ itemId: resp.data.item.id, updatedItem: resp.data.item }));
+        return resp.data;
     } catch (error) {
         console.error(error.response.data);
         throw error.response.data;
@@ -53,30 +58,22 @@ const notesSlice = createSlice({
             })
             .addCase(fetchNotes.fulfilled, (state, action) => {
                 state.status = 'succeeded'
-                state.notes = state.notes.concat(action.payload)
+                notesAdapter.upsertMany(state, action.payload)
             })
             .addCase(fetchNotes.rejected, (state, action) => {
                 state.status = 'failed'
-                state.notes = action.error.message
+                state.error = action.error.message
             })
-            .addCase(addNote.fulfilled, (state, action) => {
-                state.notes.push(action.payload)
-            })
+            .addCase(addNote.fulfilled, notesAdapter.addOne)
             .addCase(addNote.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.payload;
             })
-            .addCase(updateNote.fulfilled, (state, action) => {
-                const updatedNote = action.payload;
-                state.notes = state.notes.map(note => (note.id === updatedNote.id ? updatedNote : note));
-            })
-            .addCase(deleteNote.fulfilled, (state, action) => {
-                state.notes = state.notes.filter(note => note.id !== action.payload);
-            });
+            .addCase(updateNote.fulfilled, notesAdapter.upsertOne)
+            .addCase(deleteNote.fulfilled, notesAdapter.removeOne);
     },
 });
 
 export default notesSlice.reducer
 
-export const selectAllNotes = (state) => state.notes.notes
-export const selectNoteById = (state, noteId) => state.notes.notes.find((note) => note.id === noteId)
+export const { selectAll: selectAllNotes, selectById: selectNoteById } = notesAdapter.getSelectors(state => state.notes);

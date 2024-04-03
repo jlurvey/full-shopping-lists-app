@@ -1,14 +1,17 @@
 //src/features/stores/storesSlice.js
 
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk, createEntityAdapter } from '@reduxjs/toolkit'
 import axios from 'axios'
 
-const initialState = {
-    stores: [],
+const storesAdapter = createEntityAdapter({
+    selectId: store => store.id,
+  });
+
+const initialState = storesAdapter.getInitialState({
     status: 'idle',
     error: null,
-    selectedStore: null
-}
+    selectedStore: null,
+  });
 
 const API_URL = 'http://localhost:5555'
 
@@ -58,32 +61,24 @@ const storesSlice = createSlice({
             })
             .addCase(fetchStores.fulfilled, (state, action) => {
                 state.status = 'succeeded'
-                state.stores = state.stores.concat(action.payload)
+                storesAdapter.upsertMany(state, action.payload);
             })
             .addCase(fetchStores.rejected, (state, action) => {
                 state.status = 'failed'
-                state.stores = action.error.message
+                state.error = action.error.message
             })
-            .addCase(addStore.fulfilled, (state, action) => {
-                state.stores.push(action.payload)
-            })
+            .addCase(addStore.fulfilled, storesAdapter.addOne)
             .addCase(addStore.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.payload;
             })
-            .addCase(updateStore.fulfilled, (state, action) => {
-                const updatedStore = action.payload;
-                state.stores = state.stores.map(store => (store.id === updatedStore.id ? updatedStore : store));
-            })
-            .addCase(deleteStore.fulfilled, (state, action) => {
-                state.stores = state.stores.filter(store => store.id !== action.payload);
-            });
+            .addCase(updateStore.fulfilled, storesAdapter.upsertOne)
+            .addCase(deleteStore.fulfilled, storesAdapter.removeOne);
     },
 });
 
 export default storesSlice.reducer
 
-export const {setSelectedStore} = storesSlice.actions
+export const { selectAll: selectAllStores, selectById: selectStoreById } = storesAdapter.getSelectors(state => state.stores);
 
-export const selectAllStores = (state) => state.stores.stores
-export const selectStoreById = (state, storeId) => state.stores.stores.find((store) => store.id === storeId)
+export const {setSelectedStore} = storesSlice.actions

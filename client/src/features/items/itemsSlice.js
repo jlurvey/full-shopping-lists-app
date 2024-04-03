@@ -1,13 +1,16 @@
 //src/features/items/itemsSlice.js
 
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk, createEntityAdapter } from '@reduxjs/toolkit'
 import axios from 'axios'
 
-const initialState = {
-    items: [],
+const itemsAdapter = createEntityAdapter({
+    selectId: item => item.id
+});
+
+const initialState = itemsAdapter.getInitialState({
     status: 'idle',
     error: null,
-}
+});
 
 const API_URL = 'http://localhost:5555'
 
@@ -48,34 +51,26 @@ const itemsSlice = createSlice({
     extraReducers(builder) {
         builder
             .addCase(fetchItems.pending, (state, action) => {
-                state.status = 'loading'
+                state.status = 'loading';
             })
             .addCase(fetchItems.fulfilled, (state, action) => {
-                state.status = 'succeeded'
-                state.items = state.items.concat(action.payload)
+                state.status = 'succeeded';
+                itemsAdapter.upsertMany(state, action.payload);
             })
             .addCase(fetchItems.rejected, (state, action) => {
-                state.status = 'failed'
-                state.items = action.error.message
+                state.status = 'failed';
+                state.error = action.error.message;
             })
-            .addCase(addItem.fulfilled, (state, action) => {
-                state.items.push(action.payload)
-            })
+            .addCase(addItem.fulfilled, itemsAdapter.addOne)
             .addCase(addItem.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.payload;
             })
-            .addCase(updateItem.fulfilled, (state, action) => {
-                const updatedItem = action.payload;
-                state.items = state.items.map(item => (item.id === updatedItem.id ? updatedItem : item));
-            })
-            .addCase(deleteItem.fulfilled, (state, action) => {
-                state.items = state.items.filter(item => item.id !== action.payload);
-            });
+            .addCase(updateItem.fulfilled, itemsAdapter.upsertOne)
+            .addCase(deleteItem.fulfilled, itemsAdapter.removeOne)
     },
 });
 
 export default itemsSlice.reducer
 
-export const selectAllItems = (state) => state.items.items
-export const selectItemById = (state, itemId) => state.items.items.find((item) => item.id === itemId)
+export const { selectAll: selectAllItems, selectById: selectItemById } = itemsAdapter.getSelectors(state => state.items);

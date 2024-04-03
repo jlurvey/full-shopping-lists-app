@@ -4,6 +4,7 @@ import { selectAllItems, fetchItems } from "../items/itemsSlice";
 import { selectAllStores, fetchStores, setSelectedStore } from "../stores/storesSlice";
 import ListsItem from "./ListsItem";
 import ListsForm from "./ListsForm";
+import { selectAllNotes, fetchNotes } from "../notes/notesSlice";
 
 function Lists() {
     const dispatch = useDispatch()
@@ -13,8 +14,10 @@ function Lists() {
     const stores = useSelector(selectAllStores)
     const storeStatus = useSelector((state) => state.stores.status)
     const storesError = useSelector((state) => state.stores.error)
+    const notes = useSelector(selectAllNotes)
+    const noteStatus = useSelector((state) => state.notes.status)
+    const notesError = useSelector((state) => state.notes.error)
     const selectedStore = useSelector((state) => state.stores.selectedStore)
-
 
     useEffect(() => {
         if (itemStatus === 'idle') {
@@ -23,8 +26,10 @@ function Lists() {
         if (storeStatus === 'idle') {
             dispatch(fetchStores())
         }
-
-    }, [itemStatus, storeStatus, dispatch]);
+        if (noteStatus === 'idle') {
+            dispatch(fetchNotes())
+        }
+    }, [itemStatus, storeStatus, noteStatus, items, notes, dispatch]);
 
     useEffect(() => {
         if (!selectedStore && stores.length > 0) {
@@ -33,11 +38,9 @@ function Lists() {
         }
     }, [selectedStore, stores, dispatch]);
 
-    console.log(selectedStore)
-
     let content
 
-    if (itemStatus === 'succeeded' && storeStatus === 'succeeded' && selectedStore) {
+    if (itemStatus === 'succeeded' && storeStatus === 'succeeded' && noteStatus === 'succeeded' && selectedStore) {
         const filteredItems = [...items]
             .filter(item => item.notes.some(note => note.store.id === selectedStore.id))
             .sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
@@ -46,16 +49,19 @@ function Lists() {
             <ListsItem
                 key={item.id}
                 item={item}
-                description={item.notes.find(note => note.store.id === selectedStore.id).description}
+                description={item.notes.find(note=>note.store_id === selectedStore.id).description}
             />
         ))
 
-    } else if (itemStatus === 'failed' || storeStatus === 'failed') {
+    } else if (itemStatus === 'failed' || storeStatus === 'failed' || noteStatus === 'failed') {
         if (itemStatus === 'failed') {
             content = <div>{itemsError}</div>
         }
         if (storeStatus === 'failed') {
             content = <div>{storesError}</div>
+        }
+        if (noteStatus === 'failed') {
+            content = <div>{notesError}</div>
         }
     }
 
