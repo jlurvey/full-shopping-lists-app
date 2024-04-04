@@ -26,7 +26,7 @@ function ListsItem({ item, description }) {
                     className={item.need ? 'need' : 'doNotNeed'}
                     onClick={handleNeedChange}
                 >
-                    {item.need ? 'Need' : 'Do not need'}
+                    {item.need ? 'Remove' : 'Add'}
                 </button>
                 <button
                     className='delete'

@@ -45,6 +45,7 @@ function Item({ item, stores }) {
 
             <div>
                 <button
+                    className = 'add'
                     onClick={handleAddToStore}
                 >
                     Add to Store
@@ -53,7 +54,7 @@ function Item({ item, stores }) {
                     className={item.need ? 'need' : 'doNotNeed'}
                     onClick={handleNeedChange}
                 >
-                    {item.need ? 'Need' : 'Do not need'}
+                    {item.need ? 'Remove' : 'Add'}
                 </button>
                 <button
                     className='delete'
@@ -64,11 +65,13 @@ function Item({ item, stores }) {
             </div>
 
             {showForm && (
-                <AddToStoreForm
-                    item={item}
-                    stores={stores}
-                    onClose={() => setShowForm(false)}
-                />
+                <div className='popup-overlay'>
+                    <AddToStoreForm
+                        item={item}
+                        stores={stores}
+                        onClose={() => setShowForm(false)}
+                    />
+                </div>
             )}
         </li>
     );

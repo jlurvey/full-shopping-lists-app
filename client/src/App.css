@@ -3,8 +3,9 @@
     --lightorange: rgb(255, 220, 114);
     --orange: rgb(255, 150, 78);
     --blue: rgb(0, 33, 165);
-    --lightgray: rgb(231, 231, 231);
+    --lightgray: rgb(225, 225, 225);
     --gray: rgb(150, 150, 150);
+    --darkgray: rgb(75, 75, 75)
 }
 
 
@@ -23,7 +24,7 @@ body {
 .App {
     margin: 2rem auto;
     padding: .5rem;
-    max-width: 800px;
+    width: 90%;
     background: white;
     box-shadow: 4px 4px 10px rgba(33, 33, 33, 0.2);
     border-radius: 10px;
@@ -38,8 +39,6 @@ body {
     align-items: center;
     border-radius: 5px;
     margin: .25rem;
-    max-width: 800px;
-
 }
 
 a {
@@ -129,7 +128,7 @@ button.add {
 
 button.doNotNeed {
     width: 7rem;
-    background: var(--gray);
+    background: var(--darkgray);
     color: white;
 }
 
@@ -159,7 +158,6 @@ button.lists {
     color: var(--blue);
     padding-right: .25rem;
     padding-left: .25rem
-
 }
 
 .listButtons {
@@ -167,4 +165,24 @@ button.lists {
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-around;
+}
+
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Semi-transparent black overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-overlay>div {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }

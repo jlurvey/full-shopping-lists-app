@@ -4,10 +4,10 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux"
 import { addNote } from "../notes/notesSlice";
 
-function AddToStoreForm({ item, stores }) {
+function AddToStoreForm({ item, stores, onClose }) {
 
     const formStores = [...stores].sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
-    
+
     const dispatch = useDispatch()
 
     const [description, setDescription] = useState('')
@@ -34,6 +34,7 @@ function AddToStoreForm({ item, stores }) {
                 })).unwrap()
                 setDescription('')
                 setFormStore(formStores[0].id)
+                onClose()
             } catch (error) {
                 console.error('Item not added to store:', error)
             } finally {
@@ -42,11 +43,18 @@ function AddToStoreForm({ item, stores }) {
         }
     }
 
+    const handleClose = () => onClose();
+
+
     return (
         <div>
             <form
                 className='add'
                 onSubmit={handleSubmit}>
+                <label>
+                    Item:
+                </label>
+                {item.name}
                 <label>
                     Store:
                     <select
@@ -80,6 +88,7 @@ function AddToStoreForm({ item, stores }) {
                     Add Item to Store
                 </button>
             </form>
+            <button onClick={handleClose}>Close</button>
         </div >
     )
 };
