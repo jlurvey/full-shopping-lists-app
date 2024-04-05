@@ -17,6 +17,8 @@ class Item(db.Model, SerializerMixin):
     category = db.Column(db.String)
     need = db.Column(db.Boolean, default=True, nullable=False)
 
+    
+
     notes = db.relationship('Note', back_populates='item',
                             cascade='all, delete-orphan')
     stores = association_proxy(
@@ -33,6 +35,14 @@ class Item(db.Model, SerializerMixin):
         if existing_item and existing_item.id != self.id:
             raise ValueError("Name already exists")
         return name
+    
+    @validates('category')
+    def validate_category(self, key, category):
+        categories = ['grocery store', 'hardware store', 'pharmacy', 'convenience store', 'department store']
+        if category not in categories:
+            raise ValueError("Invalid category, please choose from the predefined categories")
+        return category
+
 
     @validates('need')
     def validate_need(self, key, need):
