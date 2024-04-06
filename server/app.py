@@ -11,7 +11,7 @@ from werkzeug.exceptions import BadRequest, HTTPException, NotFound
 # Local imports
 from config import app, db, api
 # Add your model imports
-from models import Item, Store, Note
+from models import Item, Store, Note, CATEGORIES
 
 # Views go here!
 @app.route('/')
@@ -67,6 +67,11 @@ class ItemById(Resource):
         except Exception as e:
             db.session.rollback()
             return handle_error(e)
+        
+class Categories(Resource):
+    def get(self):
+        categories = CATEGORIES
+        return make_response(jsonify(categories), 200)
 
 
 class StoreIndex(Resource):
@@ -171,6 +176,7 @@ api.add_resource(StoreIndex, '/stores', endpoint='stores')
 api.add_resource(StoreById, '/stores/<int:id>', endpoint='stores/<int:id>')
 api.add_resource(NoteIndex, '/notes', endpoint='notes')
 api.add_resource(NoteById, '/notes/<int:id>', endpoint='notes/<int:id>')
+api.add_resource(Categories, '/categories')
 
 # Handles BadRequests, KeyErrors, ValueErrors
 def handle_error(e):

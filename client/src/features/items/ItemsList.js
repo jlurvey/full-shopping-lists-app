@@ -2,8 +2,9 @@
 
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux"
-import { selectAllItems, fetchItems } from "./itemsSlice";
+import { selectAllItems, fetchItems, } from "./itemsSlice";
 import { fetchStores, selectAllStores } from "../stores/storesSlice";
+import {fetchCategories, selectAllCategories} from "../categories/categoriesSlice"
 import Item from "./Item"
 import AddItemForm from "./AddItemForm";
 
@@ -15,6 +16,7 @@ function ItemsList() {
     const stores = useSelector(selectAllStores)
     const storeStatus = useSelector((state) => state.stores.status)
     const storeError = useSelector((state) => state.stores.error)
+    const categories = useSelector(selectAllCategories)
 
     useEffect(() => {
         if (itemStatus === 'idle') {
@@ -23,8 +25,12 @@ function ItemsList() {
         if (storeStatus === 'idle') {
             dispatch(fetchStores())
         }
+        dispatch(fetchCategories());
     }, [itemStatus, storeStatus, dispatch])
 
+    console.log(categories)
+    console.log(items)
+    
     let content
 
     if (itemStatus === 'succeeded') {

@@ -19,6 +19,11 @@ export const fetchItems = createAsyncThunk('items/fetchItems', async () => {
     return resp.data
 });
 
+export const fetchCategories = createAsyncThunk('items/fetchCategories', async () => {
+    const resp = await axios.get(`${API_URL}/categories`)
+    return resp.data
+});
+
 export const addItem = createAsyncThunk('items/addItem', async (initialItem) => {
     try {
         const resp = await axios.post(`${API_URL}/items`, initialItem)

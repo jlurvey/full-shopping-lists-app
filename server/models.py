@@ -6,6 +6,8 @@ from sqlalchemy.ext.associationproxy import association_proxy
 
 from config import db
 
+CATEGORIES = [{'name': category} for category in ['grocery store', 'hardware store', 'pharmacy', 'convenience store', 'department store']]
+
 # Models go here!
 class Item(db.Model, SerializerMixin):
     __tablename__ = 'items'
@@ -16,8 +18,6 @@ class Item(db.Model, SerializerMixin):
     name = db.Column(db.String, unique=True, nullable=False)
     category = db.Column(db.String)
     need = db.Column(db.Boolean, default=True, nullable=False)
-
-    
 
     notes = db.relationship('Note', back_populates='item',
                             cascade='all, delete-orphan')
@@ -38,8 +38,7 @@ class Item(db.Model, SerializerMixin):
     
     @validates('category')
     def validate_category(self, key, category):
-        categories = ['grocery store', 'hardware store', 'pharmacy', 'convenience store', 'department store']
-        if category not in categories:
+        if category not in [category['name'] for category in CATEGORIES]:
             raise ValueError("Invalid category, please choose from the predefined categories")
         return category
 
