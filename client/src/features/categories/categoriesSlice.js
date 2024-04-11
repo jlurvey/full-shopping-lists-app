@@ -4,10 +4,7 @@ import { createSlice, createAsyncThunk, createEntityAdapter } from '@reduxjs/too
 import axios from 'axios'
 
 const categoriesAdapter = createEntityAdapter({
-    selectId: category => {
-        console.log("Category:", category);
-        return category.name
-    }
+    selectId: category => category.name
 });
 
 const initialState = categoriesAdapter.getInitialState({

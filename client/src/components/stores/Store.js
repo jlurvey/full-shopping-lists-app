@@ -1,5 +1,5 @@
 import React from "react";
-import { deleteStore } from "./storesSlice";
+import { deleteStore } from "../../features/stores/storesSlice";
 import { useDispatch } from "react-redux";
 
 function Store({ store }) {

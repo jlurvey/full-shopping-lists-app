@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import AddToStoreForm from "./AddToStoreForm";
-import { deleteItem, updateItem } from "./itemsSlice";
+import { deleteItem, updateItem } from "../../features/items/itemsSlice";
 import { useDispatch } from "react-redux";
 
-function Item({ item, stores }) {
+function Item({ item, stores, categories }) {
 
     const dispatch = useDispatch();
 
@@ -21,7 +21,6 @@ function Item({ item, stores }) {
     const handleAddToStore = () => {
         setShowForm(true);
     };
-
 
     return (
         <li className={item.need ? 'need' : 'doNotNeed'}>
@@ -68,6 +67,7 @@ function Item({ item, stores }) {
                 <div className='popup-overlay'>
                     <AddToStoreForm
                         item={item}
+                        categories={categories}
                         stores={stores}
                         onClose={() => setShowForm(false)}
                     />

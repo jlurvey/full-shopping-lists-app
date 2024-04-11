@@ -1,12 +1,11 @@
 //src/components/App.js
 
-import React, { useEffect, useState } from "react";
 import "../App.css"
 import { Route, Switch } from "react-router-dom";
 import NavBar from "./NavBar";
-import ItemsList from "../features/items/ItemsList";
-import StoresList from "../features/stores/StoresList";
-import Lists from "../features/lists/Lists";
+import ItemsList from "./items/ItemsList";
+import StoresList from "./stores/StoresList";
+import Lists from "./lists/Lists";
 
 function App() {
     return (

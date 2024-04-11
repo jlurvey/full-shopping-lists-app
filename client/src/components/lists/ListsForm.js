@@ -2,14 +2,14 @@
 
 import React, { useState } from "react";
 import { useDispatch } from "react-redux"
-import { addItem, } from "../items/itemsSlice";
-import { addNote, } from "../notes/notesSlice";
-import { setSelectedStore } from "../stores/storesSlice";
+import { addItem, } from "../../features/items/itemsSlice";
+import { addNote, } from "../../features/notes/notesSlice";
+import { setSelectedStore } from "../../features/stores/storesSlice";
 
-function ListsForm({ stores, selectedStore }) {
+function ListsForm({ stores, selectedStore, categories }) {
 
     const [name, setName] = useState('');
-    const [category, setCategory] = useState('')
+    const [category, setCategory] = useState(categories[0].name)
     const [description, setDescription] = useState('')
     const [addRequestStatus, setAddRequestStatus] = useState('idle')
 
@@ -34,7 +34,6 @@ function ListsForm({ stores, selectedStore }) {
                     item_id: addedItem.id
                 })).unwrap()
                 setName('')
-                setCategory('')
                 setDescription('')
             } catch (error) {
                 console.error('Item not added to store:', error)
@@ -76,12 +75,23 @@ function ListsForm({ stores, selectedStore }) {
                     onChange={handleNameChange}
                 />
                 Category:
-                <input
-                    type='text'
+                <select
+                    form='addItem'
+                    type='select'
                     name='category'
                     value={category}
                     onChange={handleCategoryChange}
-                />
+                >
+                    {categories
+                        .map((category) => (
+                            <option
+                                key={category.name}
+                                value={category.name}
+                            >
+                                {category.name}
+                            </option>
+                        ))}
+                </select>
                 Note:
                 <input
                     type='text'

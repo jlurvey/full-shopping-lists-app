@@ -2,25 +2,23 @@
 
 import React, { useState } from "react";
 import { useDispatch } from "react-redux"
-import { addNote } from "../notes/notesSlice";
+import { addNote } from "../../features/notes/notesSlice";
 
 function AddToStoreForm({ item, stores, onClose }) {
 
-    const formStores = [...stores].sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
+    const formStores = stores.slice().sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
 
     const dispatch = useDispatch()
-
-    const [description, setDescription] = useState('')
+    
     const [formStore, setFormStore] = useState(formStores[0].id)
-
-    console.log(formStore)
-
+    const [description, setDescription] = useState('')
+    
     const [addRequestStatus, setAddRequestStatus] = useState('idle')
 
-    const handleDescriptionChange = (e) => setDescription(e.target.value)
     const handleFormStoreChange = (e) => setFormStore(parseInt(e.target.value))
+    const handleDescriptionChange = (e) => setDescription(e.target.value)
 
-    const canAdd = [item.id, description, formStore].every(Boolean) && addRequestStatus === 'idle'
+    const canAdd = [item.id, formStore, description].every(Boolean) && addRequestStatus === 'idle'
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -51,29 +49,25 @@ function AddToStoreForm({ item, stores, onClose }) {
             <form
                 className='add'
                 onSubmit={handleSubmit}>
-                <label>
-                    Item:
-                </label>
-                {item.name}
-                <label>
-                    Store:
-                    <select
-                        form='addItemToStore'
-                        type='select'
-                        name='store'
-                        value={formStore}
-                        onChange={handleFormStoreChange}
-                    >
-                        {formStores.map((store) => (
-                            <option
-                                key={store.id}
-                                value={store.id}
-                            >
-                                {store.name}
-                            </option>
-                        ))}
-                    </select>
-                </label>
+                Item: {item.name}
+                Category: {item.category}
+                Store:
+                <select
+                    form='addItemToStore'
+                    type='select'
+                    name='store'
+                    value={formStore}
+                    onChange={handleFormStoreChange}
+                >
+                    {formStores.map((store) => (
+                        <option
+                            key={store.id}
+                            value={store.id}
+                        >
+                            {store.name}
+                        </option>
+                    ))}
+                </select>
                 Note:
                 <input
                     type='text'

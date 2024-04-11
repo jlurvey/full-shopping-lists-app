@@ -1,14 +1,14 @@
 //src/features/items/addItemForm.js
 
 import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux"
+import { useDispatch } from "react-redux"
 
-import { addItem } from "./itemsSlice";
+import { addItem } from "../../features/items/itemsSlice";
 
-function AddItemForm() {
+function AddItemForm({ categories }) {
 
     const [name, setName] = useState('');
-    const [category, setCategory] = useState('')
+    const [category, setCategory] = useState(categories[0].name)
     const [addRequestStatus, setAddRequestStatus] = useState('idle')
 
     const dispatch = useDispatch()
@@ -17,8 +17,6 @@ function AddItemForm() {
 
     const canAdd = [name, category].every(Boolean) && addRequestStatus === 'idle'
 
-
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (canAdd) {
@@ -26,7 +24,6 @@ function AddItemForm() {
                 setAddRequestStatus('pending')
                 await dispatch(addItem({ name, category, need: true })).unwrap()
                 setName('')
-                setCategory('')
             } catch (error) {
                 console.error('Failed to add item')
             } finally {
@@ -37,8 +34,8 @@ function AddItemForm() {
 
     return (
         <div>
-            <form className='add' 
-            onSubmit={handleSubmit}>
+            <form className='add'
+                onSubmit={handleSubmit}>
                 Item Name:
                 <input
                     type='text'
@@ -47,12 +44,23 @@ function AddItemForm() {
                     onChange={handleNameChange}
                 />
                 Category:
-                <input
-                    type='text'
+                <select
+                    form='addItem'
+                    type='select'
                     name='category'
                     value={category}
                     onChange={handleCategoryChange}
-                />
+                >
+                    {categories
+                        .map((category) => (
+                            <option
+                                key={category.name}
+                                value={category.name}
+                            >
+                                {category.name}
+                            </option>
+                        ))}
+                </select>
                 <button className='add' type='submit'>Add Item</button>
             </form>
         </div>

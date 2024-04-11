@@ -1,0 +1,74 @@
+//src/features/items/itemsList.js
+
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux"
+import { selectAllItems, fetchItems, } from "../../features/items/itemsSlice";
+import { fetchStores, selectAllStores } from "../../features/stores/storesSlice";
+import { fetchCategories, selectAllCategories } from "../../features/categories/categoriesSlice"
+import Item from "./Item"
+import AddItemForm from "./AddItemForm";
+
+function ItemsList() {
+    const dispatch = useDispatch()
+    const items = useSelector(selectAllItems)
+    const itemStatus = useSelector((state) => state.items.status)
+    const itemError = useSelector((state) => state.items.error)
+    const stores = useSelector(selectAllStores)
+    const storeStatus = useSelector((state) => state.stores.status)
+    const storeError = useSelector((state) => state.stores.error)
+    const categories = useSelector(selectAllCategories)
+    const categoryStatus = useSelector((state) => state.categories.status)
+    const categoryError = useSelector((state) => state.categories.error)
+
+    useEffect(() => {
+        if (itemStatus === 'idle') {
+            dispatch(fetchItems())
+        }
+        if (storeStatus === 'idle') {
+            dispatch(fetchStores())
+        }
+        if (categoryStatus === 'idle') {
+            dispatch(fetchCategories())
+        }
+    }, [itemStatus, storeStatus, categoryStatus, dispatch])
+
+    const renderItems = () => {
+        if (itemStatus === "failed") {
+            return <div>{itemError}</div>;
+        }
+        if (storeStatus === "failed") {
+            return <div>{storeError}</div>;
+        }
+        if (categoryStatus === "failed") {
+            return <div>{categoryError}</div>;
+        }
+        if (itemStatus === 'succeeded' && categoryStatus === 'succeeded' && storeStatus === 'succeeded') {
+            const sortedItems = items
+                .slice()
+                .sort((a, b) => b.need - a.need || a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
+            const sortedCats = categories
+                .slice()
+                .sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
+
+            return (
+                <>
+                    <AddItemForm categories={sortedCats} />
+                    {sortedItems.map((item) => (
+                        <Item
+                            key={item.id}
+                            item={item}
+                            stores={stores}
+                            categories={sortedCats}
+                        />
+                    ))}
+                </>
+            );
+        }
+
+        return null;
+    };
+
+    return <div>{renderItems()}</div>
+}
+
+export default ItemsList

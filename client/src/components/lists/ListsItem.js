@@ -1,5 +1,5 @@
 import React from "react";
-import { deleteItem, updateItem } from "../items/itemsSlice";
+import { deleteItem, updateItem } from "../../features/items/itemsSlice";
 import { useDispatch } from "react-redux";
 
 function ListsItem({ item, description }) {
