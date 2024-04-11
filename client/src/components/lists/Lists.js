@@ -44,7 +44,7 @@ function Lists() {
         }
     }, [selectedStore, stores, dispatch]);
 
-    const renderItems = () => {
+    const renderLists = () => {
 
         if (itemStatus === "failed") {
             return <div>{itemError}</div>;
@@ -88,7 +88,7 @@ function Lists() {
         return null;
     };
 
-    return <div>{renderItems()}</div>
+    return <div>{renderLists()}</div>
 }
 
 export default Lists

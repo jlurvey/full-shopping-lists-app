@@ -32,7 +32,6 @@ export const addStore = createAsyncThunk('stores/addStore', async (initialStore)
 
 export const updateStore = createAsyncThunk('stores/updateStore', async ({ storeId, updatedStore }) => {
     try {
-        console.log(updatedStore)
         const resp = await axios.patch(`${API_URL}/stores/${storeId}`, updatedStore);
         return resp.data;
     } catch (error) {

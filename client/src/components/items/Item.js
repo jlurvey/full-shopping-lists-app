@@ -30,21 +30,21 @@ function Item({ item, stores, categories }) {
                 <ul>
                     {item.notes
                         .map((note) => note.store.name)
-                        .sort()
-                        .map((storeName) =>
+                        .sort((a, b) => a.toUpperCase().localeCompare(b.toUpperCase()))
+                        .map((storeName) => (
                             <li
                                 className={item.need ? 'need' : 'doNotNeed'}
                                 key={storeName}
                             >
                                 {storeName}
-                            </li>)
-                    }
+                            </li>
+                        ))}
                 </ul>
             </span>
 
             <div>
                 <button
-                    className = 'add'
+                    className='add'
                     onClick={handleAddToStore}
                 >
                     Add to Store
