@@ -24,7 +24,6 @@ export const addNote = createAsyncThunk('notes/addNote', async (initialNote, { d
     try {
         const resp = await axios.post(`${API_URL}/notes`, initialNote);
         await dispatch(updateItem({ itemId: resp.data.item.id, updatedItem: resp.data.item }));
-        console.log(resp.data)
         return resp.data;
     } catch (error) {
         console.error(error.response.data);

@@ -2,16 +2,17 @@
 
 import { createSlice, createAsyncThunk, createEntityAdapter } from '@reduxjs/toolkit'
 import axios from 'axios'
+import { fetchItems, selectAllItems, updateItem } from "../items/itemsSlice";
 
 const storesAdapter = createEntityAdapter({
     selectId: store => store.id,
-  });
+});
 
 const initialState = storesAdapter.getInitialState({
     status: 'idle',
     error: null,
     selectedStore: null,
-  });
+});
 
 const API_URL = 'http://localhost:5555'
 
@@ -40,9 +41,15 @@ export const updateStore = createAsyncThunk('stores/updateStore', async ({ store
     }
 });
 
-export const deleteStore = createAsyncThunk('stores/deleteStore', async (storeId) => {
-    await axios.delete(`${API_URL}/stores/${storeId}`);
-    return storeId
+export const deleteStore = createAsyncThunk('stores/deleteStore', async (storeId, { dispatch, getState }) => {
+    try {
+        await axios.delete(`${API_URL}/stores/${storeId}`);
+        await dispatch(fetchItems());
+        return storeId
+    } catch (error) {
+        console.error(error.response.data);
+        throw error.response.data;
+    }
 });
 
 const storesSlice = createSlice({
@@ -80,4 +87,4 @@ export default storesSlice.reducer
 
 export const { selectAll: selectAllStores, selectById: selectStoreById } = storesAdapter.getSelectors(state => state.stores);
 
-export const {setSelectedStore} = storesSlice.actions
+export const { setSelectedStore } = storesSlice.actions
