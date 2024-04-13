@@ -30,7 +30,8 @@ const categoriesSlice = createSlice({
             })
             .addCase(fetchCategories.fulfilled, (state, action) => {
                 state.status = 'succeeded';
-                categoriesAdapter.upsertMany(state, action.payload);
+                categoriesAdapter
+                    .upsertMany(state, action.payload.sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase())));
             })
             .addCase(fetchCategories.rejected, (state, action) => {
                 state.status = 'failed';
@@ -41,4 +42,4 @@ const categoriesSlice = createSlice({
 
 export default categoriesSlice.reducer
 
-export const { selectAll: selectAllCategories} = categoriesAdapter.getSelectors(state => state.categories);
+export const { selectAll: selectAllCategories } = categoriesAdapter.getSelectors(state => state.categories);

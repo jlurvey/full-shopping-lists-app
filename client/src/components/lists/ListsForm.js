@@ -48,63 +48,67 @@ function ListsForm({ stores, selectedStore, categories }) {
             <form
                 className='add'
                 onSubmit={handleSubmit}>
-                <label>
-                    Filter By Store:
+                <div className="form-group">
+                    <label>
+                        Filter By Store:
+                        <select
+                            form='addItem'
+                            type='select'
+                            name='store'
+                            value={selectedStore ? selectedStore.id : ''}
+                            onChange={handleStoreChange}
+                        >
+                            {stores.map((store) => (
+                                <option
+                                    key={store.id}
+                                    value={store.id}
+                                >
+                                    {store.name}
+                                </option>
+                            ))}
+                        </select>
+                    </label>
+                    Item Name:
+                    <input
+                        type='text'
+                        name='name'
+                        value={name}
+                        onChange={handleNameChange}
+                    />
+                    Category:
                     <select
                         form='addItem'
                         type='select'
-                        name='store'
-                        value={selectedStore ? selectedStore.id : ''}
-                        onChange={handleStoreChange}
+                        name='category'
+                        value={category}
+                        onChange={handleCategoryChange}
                     >
-                        {stores.map((store) => (
-                            <option
-                                key={store.id}
-                                value={store.id}
-                            >
-                                {store.name}
-                            </option>
-                        ))}
+                        {categories
+                            .map((category) => (
+                                <option
+                                    key={category.name}
+                                    value={category.name}
+                                >
+                                    {category.name}
+                                </option>
+                            ))}
                     </select>
-                </label>
-                Item Name:
-                <input
-                    type='text'
-                    name='name'
-                    value={name}
-                    onChange={handleNameChange}
-                />
-                Category:
-                <select
-                    form='addItem'
-                    type='select'
-                    name='category'
-                    value={category}
-                    onChange={handleCategoryChange}
-                >
-                    {categories
-                        .map((category) => (
-                            <option
-                                key={category.name}
-                                value={category.name}
-                            >
-                                {category.name}
-                            </option>
-                        ))}
-                </select>
-                Note:
-                <input
-                    type='text'
-                    name='description'
-                    value={description}
-                    onChange={handleDescriptionChange}
-                />
-                <button
-                    className='add'
-                    type='submit'
-                >
-                    Add Item to Store
-                </button>
+                </div>
+                <div className="form-group">
+                    Note:
+                    <input
+                        type='text'
+                        name='description'
+                        value={description}
+                        onChange={handleDescriptionChange}
+                    />
+                    <button
+                        className='add'
+                        type='submit'
+                    >
+                        Add Item to Store
+                    </button>
+                </div>
             </form>
         </div >
     )

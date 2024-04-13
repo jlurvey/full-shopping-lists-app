@@ -70,11 +70,17 @@ function Lists() {
                 .sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
             const sortedCats = categories
                 .slice()
-                .sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
+                //.sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
 
             return (
                 <>
                     <ListsForm stores={sortedStores} selectedStore={selectedStore} categories={sortedCats} />
+                    <li className='topRow'>
+                        <span>Item Name</span>
+                        <span>Category</span>
+                        <span>Note</span>
+                        <span className='actions'>Actions</span>
+                    </li>
                     {filteredItems.map((item) => (
                         <ListsItem
                             key={item.id}

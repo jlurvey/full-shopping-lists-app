@@ -30,6 +30,10 @@ function StoresList() {
             return (
                 <>
                     <AddStoreForm />
+                    <li className='topRow'>
+                        <span>Store Name</span>
+                        <span className='actions'>Actions</span>
+                    </li>
                     {sortedStores.map((store) => (
                         <Store
                             key={store.id}

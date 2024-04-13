@@ -34,16 +34,18 @@ function AddStoreForm() {
 
     return (
         <div>
-            <form className='add' 
-            onSubmit={handleSubmit}>
-                Store Name:
-                <input
-                    type='text'
-                    name='name'
-                    value={name}
-                    onChange={handleNameChange}
-                />
-                <button className='add' type='submit'>Add Store</button>
+            <form className='add'
+                onSubmit={handleSubmit}>
+                <div className="form-group">
+                    Store Name:
+                    <input
+                        type='text'
+                        name='name'
+                        value={name}
+                        onChange={handleNameChange}
+                    />
+                    <button className='add' type='submit'>Add Store</button>
+                </div>
             </form>
         </div>
     )

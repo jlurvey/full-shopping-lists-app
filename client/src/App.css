@@ -65,11 +65,18 @@ header {
     font-weight: bold;
 }
 
-form.add {
+.form-group {
     display: flex;
+    height: 25px;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
+    margin-bottom: 0px
+}
+
+
+form.add {
+    display: flex;
+    flex-direction: column;
     background: var(--lightorange);
     margin: .25rem;
     border-radius: 5px;
@@ -85,14 +92,12 @@ form.addItem button[type="submit"] {
     flex: 0;
 }
 
-li {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--lightblue);
-    margin: .25rem;
-    border-radius: 5px;
+
+span.actions {
+    text-align: center;
+    white-space: nowrap;
 }
+
 
 .Home {
     display: flex;
@@ -103,13 +108,26 @@ li {
     justify-content: center;
 }
 
+li {
+    display: flex;
+    align-items: center;
+    background: var(--lightblue);
+    margin: .25rem;
+    border-radius: 5px;
+}
+
+li.topRow {
+    font-weight: bold;
+    background: white
+}
+
 li.doNotNeed {
     background: var(--gray);
 
 }
 
 li span {
-    flex: 1;
+    flex:1
 }
 
 button {
@@ -126,14 +144,20 @@ button.add {
     color: white;
 }
 
+button.addToStore {
+    width: 6rem;
+    background: var(--orange);
+    color: white;
+}
+
 button.doNotNeed {
-    width: 7rem;
+    width: 6rem;
     background: var(--darkgray);
     color: white;
 }
 
 button.need {
-    width: 7rem;
+    width: 6rem;
     background: var(--blue);
     color: white;
 }

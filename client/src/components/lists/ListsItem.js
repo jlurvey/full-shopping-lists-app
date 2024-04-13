@@ -21,7 +21,7 @@ function ListsItem({ item, description }) {
             <span>{item.name}</span>
             <span>{item.category}</span>
             <span>{description}</span>
-            <div>
+            <span className='actions'>
                 <button
                     className={item.need ? 'need' : 'doNotNeed'}
                     onClick={handleNeedChange}
@@ -32,9 +32,9 @@ function ListsItem({ item, description }) {
                     className='delete'
                     onClick={handleDelete}
                 >
-                    X
+                    Delete
                 </button>
-            </div>
+            </span>
         </li>
     );
 }

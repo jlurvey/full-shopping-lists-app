@@ -41,10 +41,9 @@ function Item({ item, stores, categories }) {
                         ))}
                 </ul>
             </span>
-
-            <div>
+            <span className='actions'>
                 <button
-                    className='add'
+                    className={item.need ? 'addToStore' : 'doNotNeed'}
                     onClick={handleAddToStore}
                 >
                     Add to Store
@@ -59,9 +58,9 @@ function Item({ item, stores, categories }) {
                     className='delete'
                     onClick={handleDelete}
                 >
-                    X
+                    Delete
                 </button>
-            </div>
+            </span>
 
             {showForm && (
                 <div className='popup-overlay'>

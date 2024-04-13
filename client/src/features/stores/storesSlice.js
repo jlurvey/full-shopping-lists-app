@@ -2,7 +2,7 @@
 
 import { createSlice, createAsyncThunk, createEntityAdapter } from '@reduxjs/toolkit'
 import axios from 'axios'
-import { fetchItems, selectAllItems, updateItem } from "../items/itemsSlice";
+import { fetchItems } from "../items/itemsSlice";
 
 const storesAdapter = createEntityAdapter({
     selectId: store => store.id,

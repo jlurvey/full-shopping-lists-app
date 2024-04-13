@@ -9,10 +9,10 @@ function AddToStoreForm({ item, stores, onClose }) {
     const formStores = stores.slice().sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
 
     const dispatch = useDispatch()
-    
+
     const [formStore, setFormStore] = useState(formStores[0].id)
     const [description, setDescription] = useState('')
-    
+
     const [addRequestStatus, setAddRequestStatus] = useState('idle')
 
     const handleFormStoreChange = (e) => setFormStore(parseInt(e.target.value))

@@ -13,14 +13,14 @@ function Store({ store }) {
         return (
             <li >
                 <span>{store.name}</span>
-                <div>
+                <span className='actions'>
                     <button
                         className='delete'
                         onClick={handleDelete}
                     >
-                        X
+                        Delete
                     </button>
-                </div>
+                </span>
             </li>
         );
     }

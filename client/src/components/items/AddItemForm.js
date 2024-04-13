@@ -36,32 +36,34 @@ function AddItemForm({ categories }) {
         <div>
             <form className='add'
                 onSubmit={handleSubmit}>
-                Item Name:
-                <input
-                    type='text'
-                    name='name'
-                    value={name}
-                    onChange={handleNameChange}
-                />
-                Category:
-                <select
-                    form='addItem'
-                    type='select'
-                    name='category'
-                    value={category}
-                    onChange={handleCategoryChange}
-                >
-                    {categories
-                        .map((category) => (
-                            <option
-                                key={category.name}
-                                value={category.name}
-                            >
-                                {category.name}
-                            </option>
-                        ))}
-                </select>
-                <button className='add' type='submit'>Add Item</button>
+                <div className="form-group">
+                    Item Name:
+                    <input
+                        type='text'
+                        name='name'
+                        value={name}
+                        onChange={handleNameChange}
+                    />
+                    Category:
+                    <select
+                        form='addItem'
+                        type='select'
+                        name='category'
+                        value={category}
+                        onChange={handleCategoryChange}
+                    >
+                        {categories
+                            .map((category) => (
+                                <option
+                                    key={category.name}
+                                    value={category.name}
+                                >
+                                    {category.name}
+                                </option>
+                            ))}
+                    </select>
+                    <button className='add' type='submit'>Add Item</button>
+                </div>
             </form>
         </div>
     )

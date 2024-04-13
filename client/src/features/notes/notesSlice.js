@@ -2,7 +2,7 @@
 
 import { createSlice, createAsyncThunk, createEntityAdapter } from '@reduxjs/toolkit'
 import axios from 'axios'
-import { updateItem } from '../items/itemsSlice'
+import { fetchItems } from '../items/itemsSlice'
 
 const notesAdapter = createEntityAdapter({
     selectId: note => note.id,
@@ -23,7 +23,8 @@ export const fetchNotes = createAsyncThunk('notes/fetchNotes', async () => {
 export const addNote = createAsyncThunk('notes/addNote', async (initialNote, { dispatch }) => {
     try {
         const resp = await axios.post(`${API_URL}/notes`, initialNote);
-        await dispatch(updateItem({ itemId: resp.data.item.id, updatedItem: resp.data.item }));
+        await dispatch(fetchItems());
+        //await dispatch(updateItem({ itemId: resp.data.item.id, updatedItem: resp.data.item }));
         return resp.data;
     } catch (error) {
         console.error(error.response.data);

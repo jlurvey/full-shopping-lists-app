@@ -48,11 +48,17 @@ function ItemsList() {
                 .sort((a, b) => b.need - a.need || a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
             const sortedCats = categories
                 .slice()
-                .sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
+            ///.sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
 
             return (
                 <>
                     <AddItemForm categories={sortedCats} />
+                    <li className='topRow'>
+                        <span>Item Name</span>
+                        <span>Category</span>
+                        <span>Store Name</span>
+                        <span className='actions'>Actions</span>
+                    </li>
                     {sortedItems.map((item) => (
                         <Item
                             key={item.id}
