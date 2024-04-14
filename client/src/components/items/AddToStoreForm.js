@@ -49,40 +49,44 @@ function AddToStoreForm({ item, stores, onClose }) {
             <form
                 className='add'
                 onSubmit={handleSubmit}>
-                Item: {item.name}
-                Category: {item.category}
-                Store:
-                <select
-                    form='addItemToStore'
-                    type='select'
-                    name='store'
-                    value={formStore}
-                    onChange={handleFormStoreChange}
-                >
-                    {formStores.map((store) => (
-                        <option
-                            key={store.id}
-                            value={store.id}
-                        >
-                            {store.name}
-                        </option>
-                    ))}
-                </select>
-                Note:
-                <input
-                    type='text'
-                    name='description'
-                    value={description}
-                    onChange={handleDescriptionChange}
-                />
-                <button
-                    className='add'
-                    type='submit'
-                >
-                    Add Item to Store
-                </button>
+                <div className="form-group">
+                    <span>Item: {item.name}</span>
+                    <span>Category: {item.category}</span>
+                    Store:
+                    <select
+                        form='addItemToStore'
+                        type='select'
+                        name='store'
+                        value={formStore}
+                        onChange={handleFormStoreChange}
+                    >
+                        {formStores.map((store) => (
+                            <option
+                                key={store.id}
+                                value={store.id}
+                            >
+                                {store.name}
+                            </option>
+                        ))}
+                    </select>
+                    </div>
+                    <div className="form-group">
+                    Note:
+                    <input
+                        type='text'
+                        name='description'
+                        value={description}
+                        onChange={handleDescriptionChange}
+                    />
+                    <button
+                        className='add'
+                        type='submit'
+                    >
+                        Add Item to Store
+                    </button>
+                </div>
             </form>
-            <button onClick={handleClose}>Close</button>
+            <button className='close' onClick={handleClose}>Close</button>
         </div >
     )
 };
