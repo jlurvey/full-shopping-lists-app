@@ -1,54 +1,56 @@
 //src/features/stores/addStoreForm.js
 
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch } from "react-redux"
-
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 import { addStore } from "../../features/stores/storesSlice";
 
 function AddStoreForm() {
+    
+    const dispatch = useDispatch();
 
-    const [name, setName] = useState('');
-    const [addRequestStatus, setAddRequestStatus] = useState('idle')
+    const initialValues = {
+        name: "",
+    };
 
-    const dispatch = useDispatch()
-    const handleNameChange = (e) => setName(e.target.value)
+    const validationSchema = Yup.object().shape({
+        name: Yup.string().required("Store Name is required"),
+    });
 
-    const canAdd = [name].every(Boolean) && addRequestStatus === 'idle'
-
-
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (canAdd) {
-            try {
-                setAddRequestStatus('pending')
-                await dispatch(addStore({ name })).unwrap()
-                setName('')
-            } catch (error) {
-                console.error('Failed to add store')
-            } finally {
-                setAddRequestStatus('idle')
-            }
+    const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+        try {
+            await dispatch(addStore({ name: values.name })).unwrap();
+            resetForm();
+        } catch (error) {
+            console.error("Failed to add store");
+        } finally {
+            setSubmitting(false);
         }
-    }
+    };
 
     return (
         <div>
-            <form className='add'
-                onSubmit={handleSubmit}>
-                <div className="form-group">
-                    Store Name:
-                    <input
-                        type='text'
-                        name='name'
-                        value={name}
-                        onChange={handleNameChange}
-                    />
-                    <button className='add' type='submit'>Add Store</button>
-                </div>
-            </form>
+            <Formik
+                initialValues={initialValues}
+                validationSchema={validationSchema}
+                onSubmit={handleSubmit}
+            >
+                {({ isSubmitting }) => (
+                    <Form className="add">
+                        <div className="form-group">
+                            <label htmlFor="name">Store Name:</label>
+                            <Field type="text" name="name" />
+                            <ErrorMessage name="name" component="div" className="error" />
+                            <button className="add" type="submit" disabled={isSubmitting}>
+                                {isSubmitting ? "Adding..." : "Add Store"}
+                            </button>
+                        </div>
+                    </Form>
+                )}
+            </Formik>
         </div>
-    )
+    );
 };
 
 export default AddStoreForm
