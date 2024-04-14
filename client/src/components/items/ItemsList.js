@@ -48,7 +48,9 @@ function ItemsList() {
                 .sort((a, b) => b.need - a.need || a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
             const sortedCats = categories
                 .slice()
-            ///.sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
+            const sortedStores = stores
+            .slice()
+            .sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
 
             return (
                 <>
@@ -63,7 +65,7 @@ function ItemsList() {
                         <Item
                             key={item.id}
                             item={item}
-                            stores={stores}
+                            stores={sortedStores}
                             categories={sortedCats}
                         />
                     ))}

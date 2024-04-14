@@ -1,94 +1,79 @@
 //src/features/items/AddToStoreForm.js
 
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch } from "react-redux"
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 import { addNote } from "../../features/notes/notesSlice";
 
 function AddToStoreForm({ item, stores, onClose }) {
 
-    const formStores = stores.slice().sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
+    const dispatch = useDispatch();
 
-    const dispatch = useDispatch()
+    const validationSchema = Yup.object().shape({
+        description: Yup.string().required("Note is required"),
+    });
 
-    const [formStore, setFormStore] = useState(formStores[0].id)
-    const [description, setDescription] = useState('')
-
-    const [addRequestStatus, setAddRequestStatus] = useState('idle')
-
-    const handleFormStoreChange = (e) => setFormStore(parseInt(e.target.value))
-    const handleDescriptionChange = (e) => setDescription(e.target.value)
-
-    const canAdd = [item.id, formStore, description].every(Boolean) && addRequestStatus === 'idle'
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (canAdd) {
-            try {
-                setAddRequestStatus('pending')
-                await dispatch(addNote({
-                    description,
-                    store_id: formStore,
-                    item_id: item.id
-                })).unwrap()
-                setDescription('')
-                setFormStore(formStores[0].id)
-                onClose()
-            } catch (error) {
-                console.error('Item not added to store:', error)
-            } finally {
-                setAddRequestStatus('idle')
-            }
+    const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+        try {
+            await dispatch(
+                addNote({
+                    description: values.description,
+                    store_id: parseInt(values.store),
+                    item_id: item.id,
+                })
+            ).unwrap();
+            resetForm();
+            onClose();
+        } catch (error) {
+            console.error("Item not added to store:", error);
+        } finally {
+            setSubmitting(false);
         }
-    }
-
-    const handleClose = () => onClose();
-
+    };
 
     return (
         <div>
-            <form
-                className='add'
-                onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <span>Item: {item.name}</span>
-                    <span>Category: {item.category}</span>
-                    Store:
-                    <select
-                        form='addItemToStore'
-                        type='select'
-                        name='store'
-                        value={formStore}
-                        onChange={handleFormStoreChange}
-                    >
-                        {formStores.map((store) => (
-                            <option
-                                key={store.id}
-                                value={store.id}
-                            >
-                                {store.name}
-                            </option>
-                        ))}
-                    </select>
-                    </div>
-                    <div className="form-group">
-                    Note:
-                    <input
-                        type='text'
-                        name='description'
-                        value={description}
-                        onChange={handleDescriptionChange}
-                    />
-                    <button
-                        className='add'
-                        type='submit'
-                    >
-                        Add Item to Store
-                    </button>
-                </div>
-            </form>
-            <button className='close' onClick={handleClose}>Close</button>
-        </div >
-    )
+            <Formik
+                initialValues={{
+                    store: stores.length > 0 ? stores[0].id : "",
+                    description: "",
+                }}
+                validationSchema={validationSchema}
+                onSubmit={handleSubmit}
+            >
+                {({ isSubmitting }) => (
+                    <Form className="add">
+                        <div className="form-group">
+                            <span>Item: {item.name}</span>
+                            <span>Category: {item.category}</span>
+                            Store:
+                            <Field as="select" name="store">
+                                {stores.map((store) => (
+                                    <option key={store.id} value={store.id}>
+                                        {store.name}
+                                    </option>
+                                ))}
+                            </Field>
+                        </div>
+                        <div className="form-group">
+                            <label>
+                                Note:
+                                <Field type="text" name="description" />
+                                <ErrorMessage name="description" component="div" className="error" />
+                            </label>
+                            <button className="add" type="submit" disabled={isSubmitting}>
+                                {isSubmitting ? "Adding..." : "Add Item to Store"}
+                            </button>
+                        </div>
+                    </Form>
+                )}
+            </Formik>
+            <button className="close" onClick={onClose}>
+                Close
+            </button>
+        </div>
+    );
 };
 
 export default AddToStoreForm
