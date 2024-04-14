@@ -62,6 +62,6 @@ function AddItemForm({ categories }) {
             </Formik>
         </div>
     );
-}
+};
 
 export default AddItemForm
