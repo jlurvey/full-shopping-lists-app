@@ -2,71 +2,65 @@
 
 import React, { useState } from "react";
 import { useDispatch } from "react-redux"
-
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 import { addItem } from "../../features/items/itemsSlice";
 
 function AddItemForm({ categories }) {
+    const dispatch = useDispatch();
 
-    const [name, setName] = useState('');
-    const [category, setCategory] = useState(categories[0].name)
-    const [addRequestStatus, setAddRequestStatus] = useState('idle')
+  const initialValues = {
+    name: "",
+    category: categories.length > 0 ? categories[0].name : "",
+  };
 
-    const dispatch = useDispatch()
-    const handleNameChange = (e) => setName(e.target.value)
-    const handleCategoryChange = (e) => setCategory(e.target.value)
+  const validationSchema = Yup.object().shape({
+    name: Yup.string().required("Name is required"),
+    category: Yup.string().required("Category is required"),
+  });
 
-    const canAdd = [name, category].every(Boolean) && addRequestStatus === 'idle'
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (canAdd) {
-            try {
-                setAddRequestStatus('pending')
-                await dispatch(addItem({ name, category, need: true })).unwrap()
-                setName('')
-            } catch (error) {
-                console.error('Failed to add item')
-            } finally {
-                setAddRequestStatus('idle')
-            }
-        }
+  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+    try {
+      await dispatch(addItem({ name: values.name, category: values.category, need: true })).unwrap();
+      resetForm();
+    } catch (error) {
+      console.error("Failed to add item");
+    } finally {
+      setSubmitting(false);
     }
+  };
 
-    return (
-        <div>
-            <form className='add'
-                onSubmit={handleSubmit}>
-                <div className="form-group">
-                    Item Name:
-                    <input
-                        type='text'
-                        name='name'
-                        value={name}
-                        onChange={handleNameChange}
-                    />
-                    Category:
-                    <select
-                        form='addItem'
-                        type='select'
-                        name='category'
-                        value={category}
-                        onChange={handleCategoryChange}
-                    >
-                        {categories
-                            .map((category) => (
-                                <option
-                                    key={category.name}
-                                    value={category.name}
-                                >
-                                    {category.name}
-                                </option>
-                            ))}
-                    </select>
-                    <button className='add' type='submit'>Add Item</button>
-                </div>
-            </form>
-        </div>
-    )
-};
+  return (
+    <div>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        {({ isSubmitting }) => (
+          <Form className="add">
+            <div className="form-group">
+              <label htmlFor="name">Item Name:</label>
+              <Field type="text" name="name" />
+              <ErrorMessage name="name" component="div" className="error" />
+              <label htmlFor="category">Category:</label>
+              <Field as="select" name="category">
+                {categories.map((category) => (
+                  <option key={category.name} value={category.name}>
+                    {category.name}
+                  </option>
+                ))}
+              </Field>
+              <ErrorMessage name="category" component="div" className="error" />
+              <button className="add" type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Adding..." : "Add Item"}
+              </button>
+            </div>
+          </Form>
+        )}
+      </Formik>
+    </div>
+  );
+}
 
 export default AddItemForm

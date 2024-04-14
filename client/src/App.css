@@ -218,6 +218,6 @@ button.lists {
 button.close {
     background: red;
     color: white;
-    margin-left: auto; /* This pushes the button to the right */
-    margin-right: auto; /* This pushes the button to the left */
+    margin-left: auto;
+    margin-right: auto;
 }
