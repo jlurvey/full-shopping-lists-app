@@ -8,7 +8,7 @@ import { addItem, } from "../../features/items/itemsSlice";
 import { addNote, } from "../../features/notes/notesSlice";
 import { setSelectedStore } from "../../features/stores/storesSlice";
 
-function ListsForm({ stores, selectedStore, categories }) {
+function ListsForm({ stores, selectedStore, categories, items }) {
 
     const dispatch = useDispatch();
 
@@ -20,9 +20,23 @@ function ListsForm({ stores, selectedStore, categories }) {
     };
 
     const validationSchema = Yup.object().shape({
-        name: Yup.string().required("Item Name is required"),
-        category: Yup.string().required("Category is required"),
-        description: Yup.string().required("Note is required"),
+        name: Yup.string()
+            .required("Name is required")
+            .test('is-string', 'Name must be a string', (value) => typeof value === 'string')
+            .test('name-format', 'Item name must be a non-empty string', (value) => value && value.trim().length > 0)
+            .test('name-exists', 'Name already exists', (value) => {
+                return !items.some(item => item.name.toUpperCase() === value.toUpperCase());
+            }),
+        category: Yup.string()
+            .required("Category is required")
+            .test('valid-category', 'Invalid category, please choose from the predefined categories', (value) => {
+                const categoryNames = categories.map(category => category.name);
+                return categoryNames.includes(value);
+            }),
+        description: Yup.string()
+            .required("Description is required")
+            .test('is-string', 'description must be a string', (value) => typeof value === 'string')
+            .test('description-format', 'description must be a non-empty string', (value) => value && value.trim().length > 0),
         store: Yup.string().required("Store is required"),
     });
 
@@ -95,7 +109,7 @@ function ListsForm({ stores, selectedStore, categories }) {
                                 <ErrorMessage name="description" component="div" className="error" />
                             </label>
                             <button className="add" type="submit" disabled={isSubmitting}>
-                                {isSubmitting ? "Adding..." : "Add Item to Store"}
+                                {isSubmitting ? "Adding..." : "Add New Item to Store"}
                             </button>
                         </div>
                     </Form>

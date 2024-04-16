@@ -63,6 +63,7 @@ function Lists() {
         }
 
         if (itemStatus === 'succeeded' && storeStatus === 'succeeded'/* && noteStatus === 'succeeded' */&& selectedStore) {
+            const allItems = items.slice()
             const filteredItems = items.slice()
                 .filter(item => item.notes.some(note => note.store.id === selectedStore.id))
                 .sort((a, b) => b.need - a.need || a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
@@ -74,7 +75,11 @@ function Lists() {
 
             return (
                 <>
-                    <ListsForm stores={sortedStores} selectedStore={selectedStore} categories={sortedCats} />
+                    <ListsForm 
+                    stores={sortedStores} 
+                    selectedStore={selectedStore} 
+                    categories={sortedCats} 
+                    items={allItems} />
                     <li className='topRow'>
                         <span>Item Name</span>
                         <span>Category</span>
