@@ -8,7 +8,7 @@ import { addItem } from "../../features/items/itemsSlice";
 
 function AddItemForm({ items, categories }) {
 
-    const dispatch = useDispatch();
+    const dispatch = useDispatch(); 
 
 
     const initialValues = {

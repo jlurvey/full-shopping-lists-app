@@ -1,6 +1,6 @@
 //src/features/items/itemsList.js
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux"
 import { selectAllItems, fetchItems, } from "../../features/items/itemsSlice";
 import { fetchStores, selectAllStores } from "../../features/stores/storesSlice";
@@ -12,14 +12,13 @@ function ItemsList() {
     const dispatch = useDispatch()
     const items = useSelector(selectAllItems)
     const itemStatus = useSelector((state) => state.items.status)
-    const itemError = useSelector((state) => state.items.error)
+    //const itemError = useSelector((state) => state.items.error)
     const stores = useSelector(selectAllStores)
     const storeStatus = useSelector((state) => state.stores.status)
-    const storeError = useSelector((state) => state.stores.error)
+    //const storeError = useSelector((state) => state.stores.error)
     const categories = useSelector(selectAllCategories)
     const categoryStatus = useSelector((state) => state.categories.status)
-    const categoryError = useSelector((state) => state.categories.error)
-    //const [addError, setAddError] = useState(null);
+    //const categoryError = useSelector((state) => state.categories.error)
 
     useEffect(() => {
         if (itemStatus === 'idle') {
