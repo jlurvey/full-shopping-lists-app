@@ -6,7 +6,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { addStore } from "../../features/stores/storesSlice";
 
-function AddStoreForm() {
+function AddStoreForm({stores}) {
     
     const dispatch = useDispatch();
 
@@ -15,7 +15,11 @@ function AddStoreForm() {
     };
 
     const validationSchema = Yup.object().shape({
-        name: Yup.string().required("Store Name is required"),
+        name: Yup.string().required("Store Name is required")
+        .test('is-string', 'Name must be a string', (value) => typeof value === 'string')
+        .test('name-exists', 'Name already exists', (value) => {
+            return !stores.some(store => store.name === value);
+        }),
     });
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {

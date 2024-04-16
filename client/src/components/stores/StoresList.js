@@ -29,7 +29,7 @@ function StoresList() {
                 .sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
             return (
                 <>
-                    <AddStoreForm />
+                    <AddStoreForm stores={sortedStores}/>
                     <li className='topRow'>
                         <span>Store Name</span>
                         <span className='actions'>Actions</span>

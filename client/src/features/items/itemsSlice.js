@@ -19,18 +19,13 @@ export const fetchItems = createAsyncThunk('items/fetchItems', async () => {
     return resp.data
 });
 
-export const fetchCategories = createAsyncThunk('items/fetchCategories', async () => {
-    const resp = await axios.get(`${API_URL}/categories`)
-    return resp.data
-});
-
-export const addItem = createAsyncThunk('items/addItem', async (initialItem) => {
+export const addItem = createAsyncThunk('items/addItem', async (initialItem, { rejectWithValue }) => {
     try {
         const resp = await axios.post(`${API_URL}/items`, initialItem)
         return resp.data
     } catch (error) {
         console.error(error.response.data);
-        throw error.response.data;
+        return rejectWithValue(error.response.data)
     }
 });
 
@@ -69,7 +64,7 @@ const itemsSlice = createSlice({
             .addCase(addItem.fulfilled, itemsAdapter.addOne)
             .addCase(addItem.rejected, (state, action) => {
                 state.status = 'failed';
-                state.error = action.payload;
+                state.error = action.payload.error
             })
             .addCase(updateItem.fulfilled, itemsAdapter.upsertOne)
             .addCase(deleteItem.fulfilled, itemsAdapter.removeOne)

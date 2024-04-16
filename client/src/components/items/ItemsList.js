@@ -1,6 +1,6 @@
 //src/features/items/itemsList.js
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux"
 import { selectAllItems, fetchItems, } from "../../features/items/itemsSlice";
 import { fetchStores, selectAllStores } from "../../features/stores/storesSlice";
@@ -19,6 +19,7 @@ function ItemsList() {
     const categories = useSelector(selectAllCategories)
     const categoryStatus = useSelector((state) => state.categories.status)
     const categoryError = useSelector((state) => state.categories.error)
+    //const [addError, setAddError] = useState(null);
 
     useEffect(() => {
         if (itemStatus === 'idle') {
@@ -33,7 +34,7 @@ function ItemsList() {
     }, [itemStatus, storeStatus, categoryStatus, dispatch])
 
     const renderItems = () => {
-        if (itemStatus === "failed") {
+        /* if (itemStatus === "failed") {
             return <div>{itemError}</div>;
         }
         if (storeStatus === "failed") {
@@ -41,7 +42,7 @@ function ItemsList() {
         }
         if (categoryStatus === "failed") {
             return <div>{categoryError}</div>;
-        }
+        } */
         if (itemStatus === 'succeeded' && categoryStatus === 'succeeded' && storeStatus === 'succeeded') {
             const sortedItems = items
                 .slice()
@@ -54,7 +55,7 @@ function ItemsList() {
 
             return (
                 <>
-                    <AddItemForm categories={sortedCats} />
+                    <AddItemForm categories={sortedCats} items={sortedItems}/>
                     <li className='topRow'>
                         <span>Item Name</span>
                         <span>Category</span>

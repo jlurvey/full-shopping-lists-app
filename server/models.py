@@ -27,28 +27,28 @@ class Item(db.Model, SerializerMixin):
     @validates('name')
     def validate_name(self, key, name):
         if not name:
-            raise ValueError("Name is required")
-        if not isinstance(name, str):
-            raise ValueError("Name must be a string")
+            raise ValueError("item name is required")
+        if not isinstance(name,str) or not name.strip():
+            raise ValueError("item name must be a non-empty string")
         existing_item = Item.query.filter(db.func.lower(
             Item.name) == db.func.lower(name)).first()
         if existing_item and existing_item.id != self.id:
-            raise ValueError("Name already exists")
+            raise ValueError("item name already exists")
         return name
     
     @validates('category')
     def validate_category(self, key, category):
         if category not in [category['name'] for category in CATEGORIES]:
-            raise ValueError("Invalid category, please choose from the predefined categories")
+            raise ValueError("invalid category, please choose from the predefined categories")
         return category
 
 
     @validates('need')
     def validate_need(self, key, need):
         if need is None:
-            raise ValueError("Need is required")
+            raise ValueError("need is required")
         if not isinstance(need, bool):
-            raise ValueError("Need must be a boolean")
+            raise ValueError("need must be a boolean")
         return need
 
     def __repr__(self):
@@ -71,13 +71,13 @@ class Store(db.Model, SerializerMixin):
     @validates('name')
     def validate_name(self, key, name):
         if not name:
-            raise ValueError("Name is requried")
-        if not isinstance(name, str):
-            raise ValueError("Name must be a string")
+            raise ValueError("store name is requried")
+        if not isinstance(name,str) or not name.strip():
+            raise ValueError("store name must be a non-empty string")
         existing_store = Store.query.filter(db.func.lower(
             Store.name) == db.func.lower(name)).first()
         if existing_store and existing_store.id != self.id:
-            raise ValueError("Name already exists")
+            raise ValueError("store name already exists")
         return name
 
     def __repr__(self):
@@ -102,9 +102,9 @@ class Note(db.Model, SerializerMixin):
     @validates('description')
     def validate_description(self, key, description):
         if not description:
-            raise ValueError("Description is required")
-        if not isinstance(description, str):
-            raise ValueError("Description must be a string")
+            raise ValueError("description is required")
+        if not isinstance(description, str) or not description.strip():
+            raise ValueError("description must be a non-empty string")
         return description
 
     @validates('item_id', 'store_id')
@@ -118,7 +118,7 @@ class Note(db.Model, SerializerMixin):
                                              store_id=value if key == 'store_id' else self.store_id).first()
         if existing_note and existing_note.id != self.id:
             raise ValueError(
-                "Note for this combination of Item and Store already exists")
+                "note for this combination of item and store already exists")
 
         if key == 'item_id':
             Item.query.get(value)
