@@ -11,7 +11,14 @@ function AddToStoreForm({ item, stores, onClose }) {
     const dispatch = useDispatch();
 
     const validationSchema = Yup.object().shape({
-        description: Yup.string().required("Note is required"),
+        description: Yup.string()
+            .required("Description is required")
+            .test('is-string', 'description must be a string', (value) => typeof value === 'string')
+            .test('description-format', 'description must be a non-empty string', (value) => value && value.trim().length > 0),
+        store: Yup.string().required("Store is required")
+            .test('combo-exists', 'note for this combination of item and store already exists', (value) => {
+                return !item.notes.some(note => note.store_id === parseInt(value) && note.item_id === item.id);
+            }),
     });
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
@@ -55,6 +62,7 @@ function AddToStoreForm({ item, stores, onClose }) {
                                     </option>
                                 ))}
                             </Field>
+                            <ErrorMessage name="store" component="div" className="error" />
                         </div>
                         <div className="form-group">
                             <label>
