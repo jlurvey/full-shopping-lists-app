@@ -14,7 +14,7 @@ function Store({ store }) {
             <li >
                 <span>{store.name}</span>
                 <span className='actions'>
-                <button className='delete' onClick={handleDelete}><i class="fa fa-trash"></i></button>
+                <button className='delete' onClick={handleDelete}><i className="fa fa-trash"></i></button>
                 </span>
             </li>
         );

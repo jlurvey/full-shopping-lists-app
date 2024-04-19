@@ -78,15 +78,14 @@ form.add {
     flex-direction: row;
     align-items: stretch;
     height: 26px;
-    margin: 5px;
-}
-
-.form-row:first-child {
-    margin-bottom: 0; /* Remove top margin for the first form-row */
 }
 
 .form-row:last-child {
-    margin-top: 0; /* Remove top margin for the first form-row */
+    margin-bottom: 2.5px;
+}
+
+.form-row:first-child {
+    margin-top: 2.5px;
 }
 
 .form-column {
@@ -185,12 +184,12 @@ button {
     font-size: 12px;
     margin: .25rem;
     border: none;
-    margin-right: 10px
 }
 
 button.add {
     background: var(--orange);
     color: white;
+    margin-right: 10px
 }
 
 button.addToStore {

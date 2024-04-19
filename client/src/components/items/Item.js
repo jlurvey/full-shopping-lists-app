@@ -49,9 +49,9 @@ function Item({ item, stores, categories }) {
                     Add to Store
                 </button>
                 <button className={item.need ? 'need' : 'doNotNeed'} onClick={handleNeedChange}>
-                    {item.need ? <i class="fa fa-minus" ></i> : <i class="fa fa-plus"></i>}
+                    {item.need ? <i className="fa fa-minus" ></i> : <i className="fa fa-plus"></i>}
                 </button>
-                <button className='delete' onClick={handleDelete}><i class="fa fa-trash"></i></button>
+                <button className='delete' onClick={handleDelete}><i className="fa fa-trash"></i></button>
             </span>
 
             {showForm && (
