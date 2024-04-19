@@ -25,7 +25,7 @@ function ListsForm({ stores, selectedStore, categories, items }) {
             .test('is-string', 'Name must be a string', (value) => typeof value === 'string')
             .test('name-format', 'Item name must be a non-empty string', (value) => value && value.trim().length > 0)
             .test('name-exists', 'Name already exists', (value) => {
-                return !items.some(item => item.name.toUpperCase() === value.toUpperCase());
+                return !items.some(item => item.name.trim().toUpperCase() === value.trim().toUpperCase());
             }),
         category: Yup.string()
             .required("Category is required")

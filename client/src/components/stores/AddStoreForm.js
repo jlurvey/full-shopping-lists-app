@@ -20,7 +20,7 @@ function AddStoreForm({ stores }) {
             .test('is-string', 'Name must be a string', (value) => typeof value === 'string')
             .test('name-format', 'Store name must be a non-empty string', (value) => value && value.trim().length > 0)
             .test('name-exists', 'Store Name already exists', (value) => {
-                return !stores.some(store => store.name.toUpperCase() === value.toUpperCase());
+                return !stores.some(store => store.name.trim().toUpperCase() === value.trim().toUpperCase());
             }),
     });
 
