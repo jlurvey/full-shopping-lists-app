@@ -65,31 +65,60 @@ header {
     font-weight: bold;
 }
 
-.form-group {
-    display: flex;
-    height: 25px;
-    flex-wrap: wrap;
-    align-items: center;
-    margin-bottom: 0px
-}
-
-
 form.add {
     display: flex;
-    flex-direction: column;
     background: var(--lightorange);
     margin: .25rem;
     border-radius: 5px;
+    flex-direction: column;
 }
 
-form.add input,
-form.add select {
+.form-row {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    height: 26px;
+    margin: 5px;
+}
+
+.form-row:first-child {
+    margin-bottom: 0; /* Remove top margin for the first form-row */
+}
+
+.form-row:last-child {
+    margin-top: 0; /* Remove top margin for the first form-row */
+}
+
+.form-column {
     flex: 1;
-    margin-right: .5rem;
+    display: flex;
+    align-items: center;
+    margin-right: 5px
 }
 
-form.addItem button[type="submit"] {
-    flex: 0;
+
+.form-column label {
+    flex: none;
+    margin-right: 5px
+}
+
+.form-column input {
+    flex: 1;
+    margin-right: 5px;
+    min-width: 0;
+}
+
+.form-column select {
+    flex: 1;
+    margin-right: 5px;
+    min-width: 0;
+}
+
+.form-column .error {
+    color: red;
+    flex: none;
+    justify-content: left;
+    
 }
 
 
@@ -97,6 +126,8 @@ span.actions {
     text-align: center;
     white-space: nowrap;
 }
+
+
 
 
 .Home {
@@ -112,22 +143,39 @@ li {
     display: flex;
     align-items: center;
     background: var(--lightblue);
-    margin: .25rem;
+    margin: 0.25rem;;
     border-radius: 5px;
 }
 
 li.topRow {
     font-weight: bold;
-    background: white
+    background: white;
 }
 
 li.doNotNeed {
     background: var(--gray);
+}
 
+li.storeDoNotNeed {
+    background: var(--gray);
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+li.store {
+    display: flex;
+    align-items: center;
+    background: var(--lightblue);
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+    margin-left: 0;
+    margin-right: 0;
 }
 
 li span {
-    flex:1
+    flex: 1;
 }
 
 button {
@@ -137,6 +185,7 @@ button {
     font-size: 12px;
     margin: .25rem;
     border: none;
+    margin-right: 10px
 }
 
 button.add {
@@ -145,19 +194,16 @@ button.add {
 }
 
 button.addToStore {
-    width: 6rem;
     background: var(--orange);
     color: white;
 }
 
 button.doNotNeed {
-    width: 6rem;
     background: var(--darkgray);
     color: white;
 }
 
 button.need {
-    width: 6rem;
     background: var(--blue);
     color: white;
 }
@@ -203,7 +249,7 @@ button.lists {
     align-items: center;
 }
 
-.popup-overlay > div {
+.popup-overlay>div {
     background-color: white;
     padding: 20px;
     border-radius: 10px;

@@ -69,45 +69,53 @@ function ListsForm({ stores, selectedStore, categories, items }) {
             >
                 {({ isSubmitting, setFieldValue }) => (
                     <Form className="add">
-                        <div className="form-group">
-                            <label>
-                                Filter By Store:
-                                <Field as="select" name="store" onChange={(e) => {
-                                    setFieldValue("store", e.target.value);
-                                    dispatch(setSelectedStore(stores.find((store) => store.id === parseInt(e.target.value))));
-                                }}>
-                                    <option value="">Select a store</option>
-                                    {stores.map((store) => (
-                                        <option key={store.id} value={store.id}>
-                                            {store.name}
-                                        </option>
-                                    ))}
-                                </Field>
-                                <ErrorMessage name="store" component="div" className="error" />
-                            </label>
-                            <label>
-                                Item Name:
-                                <Field type="text" name="name" />
-                                <ErrorMessage name="name" component="div" className="error" />
-                            </label>
-                            <label>
-                                Category:
-                                <Field as="select" name="category">
-                                    {categories.map((category) => (
-                                        <option key={category.name} value={category.name}>
-                                            {category.name}
-                                        </option>
-                                    ))}
-                                </Field>
-                                <ErrorMessage name="category" component="div" className="error" />
-                            </label>
+                        <div className="form-row">
+                            <div className="form-column">
+                                <label>
+                                    Filter By Store:</label>
+                                    <Field as="select" name="store" onChange={(e) => {
+                                        setFieldValue("store", e.target.value);
+                                        dispatch(setSelectedStore(stores.find((store) => store.id === parseInt(e.target.value))));
+                                    }}>
+                                        <option value="">Select a store</option>
+                                        {stores.map((store) => (
+                                            <option key={store.id} value={store.id}>
+                                                {store.name}
+                                            </option>
+                                        ))}
+                                    </Field>
+                                    <ErrorMessage name="store" component="div" className="error" />
+                                
+                            </div>
+                            <div className="form-column">
+                                <label>
+                                    Item Name:</label>
+                                    <Field type="text" name="name" />
+                                    <ErrorMessage name="name" component="div" className="error" />
+                                
+                            </div>
+                            <div className="form-column">
+                                <label>
+                                    Category:</label>
+                                    <Field as="select" name="category">
+                                        {categories.map((category) => (
+                                            <option key={category.name} value={category.name}>
+                                                {category.name}
+                                            </option>
+                                        ))}
+                                    </Field>
+                                    <ErrorMessage name="category" component="div" className="error" />
+                                
+                            </div>
                         </div>
-                        <div className="form-group">
-                            <label>
-                                Note:
-                                <Field type="text" name="description" />
-                                <ErrorMessage name="description" component="div" className="error" />
-                            </label>
+                        <div className="form-row">
+                            <div className="form-column">
+                                <label>
+                                    Note:</label>
+                                    <Field type="text" name="description" />
+                                    <ErrorMessage name="description" component="div" className="error" />
+                                
+                            </div>
                             <button className="add" type="submit" disabled={isSubmitting}>
                                 {isSubmitting ? "Adding..." : "Add New Item to Store"}
                             </button>

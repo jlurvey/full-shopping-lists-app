@@ -8,7 +8,7 @@ import { addItem } from "../../features/items/itemsSlice";
 
 function AddItemForm({ items, categories }) {
 
-    const dispatch = useDispatch(); 
+    const dispatch = useDispatch();
 
 
     const initialValues = {
@@ -55,19 +55,23 @@ function AddItemForm({ items, categories }) {
             >
                 {({ isSubmitting }) => (
                     <Form className="add">
-                        <div className="form-group">
-                            <label htmlFor="name">Item Name:</label>
-                            <Field type="text" name="name" />
-                            <ErrorMessage name="name" component="div" className="error" />
-                            <label htmlFor="category">Category:</label>
-                            <Field as="select" name="category">
-                                {categories.map((category) => (
-                                    <option key={category.name} value={category.name}>
-                                        {category.name}
-                                    </option>
-                                ))}
-                            </Field>
-                            <ErrorMessage name="category" component="div" className="error" />
+                        <div className="form-row">
+                            <div className="form-column">
+                                <label htmlFor="name">Item Name:</label>
+                                <Field type="text" name="name" />
+                                <ErrorMessage name="name" component="div" className="error" />
+                            </div>
+                            <div className="form-column">
+                                <label htmlFor="category">Category:</label>
+                                <Field as="select" name="category" >
+                                    {categories.map((category) => (
+                                        <option key={category.name} value={category.name}>
+                                            {category.name}
+                                        </option>
+                                    ))}
+                                </Field>
+                                <ErrorMessage name="category" component="div" className="error" />
+                            </div>
                             <button className="add" type="submit" disabled={isSubmitting}>
                                 {isSubmitting ? "Adding..." : "Add Item"}
                             </button>

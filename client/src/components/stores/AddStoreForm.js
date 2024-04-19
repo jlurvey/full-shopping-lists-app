@@ -44,10 +44,12 @@ function AddStoreForm({ stores }) {
             >
                 {({ isSubmitting }) => (
                     <Form className="add">
-                        <div className="form-group">
-                            <label htmlFor="name">Store Name:</label>
-                            <Field type="text" name="name" />
-                            <ErrorMessage name="name" component="div" className="error" />
+                        <div className="form-row">
+                            <div className="form-column">
+                                <label htmlFor="name">Store Name:</label>
+                                <Field type="text" name="name" />
+                                <ErrorMessage name="name" component="div" className="error" />
+                            </div>
                             <button className="add" type="submit" disabled={isSubmitting}>
                                 {isSubmitting ? "Adding..." : "Add Store"}
                             </button>

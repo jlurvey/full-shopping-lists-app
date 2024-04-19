@@ -24,16 +24,16 @@ function Item({ item, stores, categories }) {
 
     return (
         <li className={item.need ? 'need' : 'doNotNeed'}>
-            <span>{item.name}</span>
-            <span>{item.category}</span>
-            <span>
+            <span className='info'>{item.name}</span>
+            <span className='info'>{item.category}</span>
+            <span className='info'>
                 <ul>
                     {item.notes
                         .map((note) => note.store.name)
                         .sort((a, b) => a.toUpperCase().localeCompare(b.toUpperCase()))
                         .map((storeName) => (
                             <li
-                                className={item.need ? 'need' : 'doNotNeed'}
+                                className={item.need ? 'store' : 'storeDoNotNeed'}
                                 key={storeName}
                             >
                                 {storeName}
@@ -48,18 +48,10 @@ function Item({ item, stores, categories }) {
                 >
                     Add to Store
                 </button>
-                <button
-                    className={item.need ? 'need' : 'doNotNeed'}
-                    onClick={handleNeedChange}
-                >
-                    {item.need ? 'Remove' : 'Add'}
+                <button className={item.need ? 'need' : 'doNotNeed'} onClick={handleNeedChange}>
+                    {item.need ? <i class="fa fa-minus" ></i> : <i class="fa fa-plus"></i>}
                 </button>
-                <button
-                    className='delete'
-                    onClick={handleDelete}
-                >
-                    Delete
-                </button>
+                <button className='delete' onClick={handleDelete}><i class="fa fa-trash"></i></button>
             </span>
 
             {showForm && (

@@ -22,18 +22,10 @@ function ListsItem({ item, description }) {
             <span>{item.category}</span>
             <span>{description}</span>
             <span className='actions'>
-                <button
-                    className={item.need ? 'need' : 'doNotNeed'}
-                    onClick={handleNeedChange}
-                >
-                    {item.need ? 'Remove' : 'Add'}
+                <button className={item.need ? 'need' : 'doNotNeed'} onClick={handleNeedChange}>
+                    {item.need ? <i class="fa fa-minus"></i> : <i class="fa fa-plus"></i>}
                 </button>
-                <button
-                    className='delete'
-                    onClick={handleDelete}
-                >
-                    Delete
-                </button>
+                <button className='delete' onClick={handleDelete}><i class="fa fa-trash"></i></button>
             </span>
         </li>
     );

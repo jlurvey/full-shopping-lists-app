@@ -51,25 +51,25 @@ function AddToStoreForm({ item, stores, onClose }) {
             >
                 {({ isSubmitting }) => (
                     <Form className="add">
-                        <div className="form-group">
-                            <span>Item: {item.name}</span>
-                            <span>Category: {item.category}</span>
-                            Store:
-                            <Field as="select" name="store">
-                                {stores.map((store) => (
-                                    <option key={store.id} value={store.id}>
-                                        {store.name}
-                                    </option>
-                                ))}
-                            </Field>
-                            <ErrorMessage name="store" component="div" className="error" />
-                        </div>
-                        <div className="form-group">
-                            <label>
-                                Note:
+                        <div className="form-row">
+                            <div className="form-column"><label>Item:</label>{item.name}</div>
+                            <div className="form-column"><label>Category:</label>{item.category}</div>
+                            <div className="form-column">
+                                <label htmlFor="store">Store:</label>
+                                <Field as="select" name="store">
+                                    {stores.map((store) => (
+                                        <option key={store.id} value={store.id}>
+                                            {store.name}
+                                        </option>
+                                    ))}
+                                </Field>
+                                <ErrorMessage name="store" component="div" className="error" />
+                            </div>
+                            <div className="form-column">
+                                <label htmlFor="description">Note:</label>
                                 <Field type="text" name="description" />
                                 <ErrorMessage name="description" component="div" className="error" />
-                            </label>
+                            </div>
                             <button className="add" type="submit" disabled={isSubmitting}>
                                 {isSubmitting ? "Adding..." : "Add Item to Store"}
                             </button>
