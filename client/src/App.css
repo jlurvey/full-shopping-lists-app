@@ -130,7 +130,6 @@ span.actions {
 
 
 .Home {
-    display: flex;
     align-items: center;
     background: var(--lightblue);
     margin: .25rem;
@@ -265,4 +264,8 @@ button.close {
     color: white;
     margin-left: auto;
     margin-right: auto;
+}
+
+.NavLink {
+    font-weight: bold
 }

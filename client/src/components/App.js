@@ -6,6 +6,7 @@ import NavBar from "./NavBar";
 import ItemsList from "./items/ItemsList";
 import StoresList from "./stores/StoresList";
 import Lists from "./lists/Lists";
+import Home from "./Home";
 
 function App() {
     return (
@@ -22,9 +23,13 @@ function App() {
                 <Route path ='/lists'>
                     <Lists />
                 </Route>
+                <Route exact path ='/'>
+                    <Home/>
+                </Route>
             </Switch>
             
         </div>
+        
     )
 }
 
