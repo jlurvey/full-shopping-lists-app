@@ -49,10 +49,6 @@ a {
     transition: color 0.3s;
 }
 
-a:visited {
-    color: purple
-}
-
 a:hover {
     color: var(--darkblue);
 }
@@ -269,5 +265,6 @@ button.close {
 }
 
 .NavLink {
-    font-weight: bold
+    font-weight: bold;
+    text-decoration: underline;
 }
