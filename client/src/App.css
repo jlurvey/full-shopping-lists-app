@@ -45,7 +45,8 @@ body {
 
 a {
     color: var(--white);
-    text-decoration: none;
+    font-weight: bold;
+    text-decoration: underline;
     transition: color 0.3s;
 }
 
@@ -262,9 +263,4 @@ button.close {
     color: white;
     margin-left: auto;
     margin-right: auto;
-}
-
-.NavLink {
-    font-weight: bold;
-    text-decoration: underline;
 }

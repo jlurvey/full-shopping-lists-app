@@ -33,15 +33,6 @@ function ItemsList() {
     }, [itemStatus, storeStatus, categoryStatus, dispatch])
 
     const renderItems = () => {
-        /* if (itemStatus === "failed") {
-            return <div>{itemError}</div>;
-        }
-        if (storeStatus === "failed") {
-            return <div>{storeError}</div>;
-        }
-        if (categoryStatus === "failed") {
-            return <div>{categoryError}</div>;
-        } */
         if (itemStatus === 'succeeded' && categoryStatus === 'succeeded' && storeStatus === 'succeeded') {
             const sortedItems = items
                 .slice()

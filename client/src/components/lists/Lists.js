@@ -14,9 +14,6 @@ function Lists() {
     const stores = useSelector(selectAllStores)
     const storeStatus = useSelector((state) => state.stores.status)
     const storeError = useSelector((state) => state.stores.error)
-    /* const notes = useSelector(selectAllNotes)
-    const noteStatus = useSelector((state) => state.notes.status)
-    const noteError = useSelector((state) => state.notes.error) */
     const selectedStore = useSelector((state) => state.stores.selectedStore)
     const categories = useSelector(selectAllCategories)
     const categoryStatus = useSelector((state) => state.categories.status)
@@ -29,13 +26,10 @@ function Lists() {
         if (storeStatus === 'idle') {
             dispatch(fetchStores())
         }
-        /* if (noteStatus === 'idle') {
-            dispatch(fetchNotes())
-        } */
         if (categoryStatus === 'idle') {
             dispatch(fetchCategories())
         }
-    }, [itemStatus, storeStatus, categoryStatus,/*  noteStatus , */dispatch]);
+    }, [itemStatus, storeStatus, categoryStatus, dispatch]);
 
     useEffect(() => {
         if (!selectedStore && stores.length > 0) {
@@ -54,15 +48,11 @@ function Lists() {
             return <div>{storeError}</div>;
         }
 
-        /* if (noteStatus === "failed") {
-            return <div>{noteError}</div>;
-        } */
-
         if (categoryStatus === "failed") {
             return <div>{categoryError}</div>;
         }
 
-        if (itemStatus === 'succeeded' && storeStatus === 'succeeded'/* && noteStatus === 'succeeded' */&& selectedStore) {
+        if (itemStatus === 'succeeded' && storeStatus === 'succeeded'&& selectedStore) {
             const allItems = items.slice()
             const filteredItems = items.slice()
                 .filter(item => item.notes.some(note => note.store.id === selectedStore.id))
@@ -71,7 +61,6 @@ function Lists() {
                 .sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
             const sortedCats = categories
                 .slice()
-                //.sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
 
             return (
                 <>

@@ -34,7 +34,6 @@ function AddItemForm({ items, categories }) {
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
         try {
-            console.log(values)
             await dispatch(addItem({ name: values.name, category: values.category, need: true })).unwrap();
             resetForm();
         } catch (error) {
