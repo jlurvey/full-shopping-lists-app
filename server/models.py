@@ -12,7 +12,7 @@ from config import db
 class Item(db.Model, SerializerMixin):
     __tablename__ = "items"
 
-    serialize_rules = ("-notes.item",)
+    serialize_rules = ("-notes.item", "-categories.item",)
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=False)
@@ -64,6 +64,8 @@ class Item(db.Model, SerializerMixin):
 
 class Category(db.Model, SerializerMixin):
     __tablename__ = "categories"
+    
+    serialize_rules = ("-items",)
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=False)
