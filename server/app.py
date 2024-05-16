@@ -11,7 +11,7 @@ from werkzeug.exceptions import BadRequest, HTTPException, NotFound
 # Local imports
 from config import app, db, api
 # Add your model imports
-from models import Item, Store, Note, CATEGORIES
+from models import Item, Store, Note, Category
 
 # Views go here!
 @app.route('/')

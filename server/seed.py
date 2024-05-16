@@ -9,7 +9,7 @@ from faker import Faker
 
 # Local imports
 from app import app
-from models import db, Item, Store, Note
+from models import db, Item, Store, Note, Category
 
 if __name__ == '__main__':
 
@@ -20,26 +20,37 @@ if __name__ == '__main__':
         Item.query.delete()
         Store.query.delete()
         Note.query.delete()
+        Category.query.delete()
 
         print("Starting seed...")
+
+        print("Creating 5 categories")
+        categories = []
+        for category_name in ['grocery store', 'hardware store', 'pharmacy', 'convenience store', 'department store']:
+            category = Category(name=category_name)
+            categories.append(category)
+        db.session.add_all(categories)
+        db.session.commit()
+
         print("Creating 20 items...")
         # items have unique names
+        categories = Category.query.all()
         items = []
         item_names = []
-        categories = ['grocery store', 'hardware store',
-                      'pharmacy', 'convenience store', 'department store']
-        for i in range(20):
+        while len(items) < 15:
             name = fake.word()
             while name in item_names:
                 name = fake.word()
+            category=rc(categories)
             item_names.append(name)
             item = Item(
                 name=name,
-                category=rc(categories),
+                category=category,
                 need=fake.boolean()
             )
+            print(item)
+            db.session.add(item)
             items.append(item)
-        db.session.add_all(items)
         db.session.commit()
 
         print("Creating 5 stores...")
