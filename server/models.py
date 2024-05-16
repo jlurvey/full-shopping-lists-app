@@ -19,16 +19,15 @@ class Item(db.Model, SerializerMixin):
     need = db.Column(db.Boolean, default=True, nullable=False)
 
     # Foreign key stores Category id
-    category_id = db.Column(db.Integer, db.ForeignKey(
-        "categories.id"), nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey("categories.id"), nullable=False)
     # relationship mapping item to related category
     category = db.relationship("Category", back_populates="items")
 
     # many-to-many relationship with stores through notes
-    notes = db.relationship("Note", back_populates="item",
-                            cascade="all, delete-orphan")
+    notes = db.relationship("Note", back_populates="item", cascade="all, delete-orphan")
     stores = association_proxy(
-        "notes", "store", creator=lambda store_obj: Note(store=store_obj))
+        "notes", "store", creator=lambda store_obj: Note(store=store_obj)
+    )
 
     @validates("name")
     def validate_name(self, key, name):
@@ -134,8 +133,7 @@ class Note(db.Model, SerializerMixin):
     item_id = db.Column(db.Integer, db.ForeignKey("items.id"), nullable=False)
     item = db.relationship("Item", back_populates="notes")
 
-    store_id = db.Column(db.Integer, db.ForeignKey(
-        "stores.id"), nullable=False)
+    store_id = db.Column(db.Integer, db.ForeignKey("stores.id"), nullable=False)
     store = db.relationship("Store", back_populates="notes")
 
     @validates("description")

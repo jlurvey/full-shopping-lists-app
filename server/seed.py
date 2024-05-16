@@ -1,4 +1,4 @@
-#seed.py
+# seed.py
 #!/usr/bin/env python3
 
 # Standard library imports
@@ -11,7 +11,7 @@ from faker import Faker
 from app import app
 from models import db, Item, Store, Note, Category
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     fake = Faker()
 
@@ -26,7 +26,13 @@ if __name__ == '__main__':
 
         print("Creating 5 categories")
         categories = []
-        for category_name in ['grocery store', 'hardware store', 'pharmacy', 'convenience store', 'department store']:
+        for category_name in [
+            "grocery store",
+            "hardware store",
+            "pharmacy",
+            "convenience store",
+            "department store",
+        ]:
             category = Category(name=category_name)
             categories.append(category)
         db.session.add_all(categories)
@@ -41,13 +47,9 @@ if __name__ == '__main__':
             name = fake.word()
             while name in item_names:
                 name = fake.word()
-            category=rc(categories)
+            category = rc(categories)
             item_names.append(name)
-            item = Item(
-                name=name,
-                category=category,
-                need=fake.boolean()
-            )
+            item = Item(name=name, category=category, need=fake.boolean())
             print(item)
             db.session.add(item)
             items.append(item)
@@ -74,15 +76,11 @@ if __name__ == '__main__':
             item = rc(items)
             store = rc(stores)
             existing_note = Note.query.filter_by(
-                item_id=item.id, store_id=store.id).first()
+                item_id=item.id, store_id=store.id
+            ).first()
             if existing_note:
-                # print(f"Note already exists for item {item.id} at store {store.id}")
                 continue
-            note = Note(
-                item_id=item.id,
-                store_id=store.id,
-                description=fake.text()
-            )
+            note = Note(item_id=item.id, store_id=store.id, description=fake.text())
             db.session.add(note)
             notes.append(note)
         db.session.commit()
