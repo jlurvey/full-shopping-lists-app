@@ -1,4 +1,4 @@
-#app.py
+# app.py
 #!/usr/bin/env python3
 
 # Standard library imports
@@ -10,27 +10,30 @@ from werkzeug.exceptions import BadRequest, HTTPException, NotFound
 
 # Local imports
 from config import app, db, api
+
 # Add your model imports
 from models import Item, Store, Note, Category
 
+
 # Views go here!
-@app.route('/')
+@app.route("/")
 def index():
-    return '<h1>Project Server</h1>'
+    return "<h1>Project Server</h1>"
 
 
 class ItemIndex(Resource):
     def get(self):
-        items = [item.to_dict() for item in Item.query.all()]
+        # items alphabetically
+        items = [item.to_dict() for item in Item.query.order_by(Item.name).all()]
         return make_response(jsonify(items), 200)
 
     def post(self):
         data = request.get_json()
         try:
             new_item = Item(
-                name=data['name'],
-                category=data['category'],
-                need=data['need'],
+                name=data["name"],
+                category_id=data["category_id"],
+                need=data["need"],
             )
             db.session.add(new_item)
             db.session.commit()
@@ -63,26 +66,72 @@ class ItemById(Resource):
         try:
             db.session.delete(item)
             db.session.commit()
-            make_response('', 204)
+            make_response("", 204)
         except Exception as e:
             db.session.rollback()
             return handle_error(e)
-        
-class Categories(Resource):
+
+
+class CategoryIndex(Resource):
     def get(self):
-        categories = CATEGORIES
+        # categories alphabetically
+        categories = [
+            category.to_dict()
+            for category in Category.query.order_by(Category.name).all()
+        ]
         return make_response(jsonify(categories), 200)
+
+    def post(self):
+        data = request.get_json()
+        try:
+            new_category = Category(name=data["name"])
+            db.session.add(new_category)
+            db.session.commit()
+            return make_response(new_category.to_dict(), 201)
+        except Exception as e:
+            db.session.rollback()
+            return handle_error(e)
+
+
+class CategoryById(Resource):
+    def get(self, id):
+        category = check_id(Category, id)
+        return make_response(jsonify(category.to_dict()), 200)
+
+    def patch(self, id):
+        data = request.get_json()
+        category = check_id(Category, id)
+        try:
+            for attr in data:
+                setattr(category, attr, data[attr])
+            db.session.add(category)
+            db.session.commit()
+            return make_response(category.to_dict(), 200)
+        except Exception as e:
+            db.session.rollback()
+            return handle_error(e)
+
+    def delete(self, id):
+        category = check_id(Category, id)
+        try:
+            db.session.delete(category)
+            db.session.commit()
+            return make_response("", 204)
+        except Exception as e:
+            db.session.rollback()
+            return handle_error(e)
 
 
 class StoreIndex(Resource):
     def get(self):
-        stores = [store.to_dict() for store in Store.query.all()]
+        # stores alphabetically
+        stores = [store.to_dict() for store in Store.query.order_by(Store.name).all()]
         return make_response(jsonify(stores), 200)
 
     def post(self):
         data = request.get_json()
         try:
-            new_store = Store(name=data['name'])
+            new_store = Store(name=data["name"])
             db.session.add(new_store)
             db.session.commit()
             return make_response(new_store.to_dict(), 201)
@@ -114,7 +163,7 @@ class StoreById(Resource):
         try:
             db.session.delete(store)
             db.session.commit()
-            return make_response('', 204)
+            return make_response("", 204)
         except Exception as e:
             db.session.rollback()
             return handle_error(e)
@@ -129,9 +178,9 @@ class NoteIndex(Resource):
         data = request.get_json()
         try:
             new_note = Note(
-                description=data['description'],
-                item_id=data['item_id'],
-                store_id=data['store_id'],
+                description=data["description"],
+                item_id=data["item_id"],
+                store_id=data["store_id"],
             )
             db.session.add(new_note)
             db.session.commit()
@@ -164,46 +213,54 @@ class NoteById(Resource):
         try:
             db.session.delete(note)
             db.session.commit()
-            return make_response('', 204)
+            return make_response("", 204)
         except Exception as e:
             db.session.rollback()
             return handle_error(e)
 
 
-api.add_resource(ItemIndex, '/items', endpoint='items')
-api.add_resource(ItemById, '/items/<int:id>', endpoint='items/<int:id>')
-api.add_resource(StoreIndex, '/stores', endpoint='stores')
-api.add_resource(StoreById, '/stores/<int:id>', endpoint='stores/<int:id>')
-api.add_resource(NoteIndex, '/notes', endpoint='notes')
-api.add_resource(NoteById, '/notes/<int:id>', endpoint='notes/<int:id>')
-api.add_resource(Categories, '/categories')
+api.add_resource(ItemIndex, "/items", endpoint="items")
+api.add_resource(ItemById, "/items/<int:id>", endpoint="items/<int:id>")
+api.add_resource(StoreIndex, "/stores", endpoint="stores")
+api.add_resource(StoreById, "/stores/<int:id>", endpoint="stores/<int:id>")
+api.add_resource(NoteIndex, "/notes", endpoint="notes")
+api.add_resource(NoteById, "/notes/<int:id>", endpoint="notes/<int:id>")
+api.add_resource(CategoryIndex, "/categories", endpoint="categories")
+api.add_resource(CategoryById, "/categories/<int:id>", endpoint="categories/<int:id>")
+
 
 # Handles BadRequests, KeyErrors, ValueErrors
 def handle_error(e):
     error_message = str(e)
     status_code = 500
     if isinstance(e, BadRequest):
-        error_message = e.description if e.description else 'Bad request'
+        error_message = e.description if e.description else "Bad request"
         status_code = e.code
     elif isinstance(e, KeyError):
-        error_message = f'Missing key: {str(e)}'
+        error_message = f"Missing key: {str(e)}"
         status_code = 400
     elif isinstance(e, ValueError):
         error_message = str(e)
         status_code = 422
-    return make_response(jsonify({'error': error_message}), status_code)
+    return make_response(jsonify({"error": error_message}), status_code)
+
 
 # For all ById resources, check id exists, return error message if not
 def check_id(model, id):
     obj = model.query.filter_by(id=id).first()
     if not obj:
-        raise NotFound(f'{model.__name__} {id} does not exist')
+        raise NotFound(f"{model.__name__} {id} does not exist")
     return obj
+
 
 # App level error handler for all HTTP errors
 @app.errorhandler(HTTPException)
 def handle_http_exception(e):
-    return make_response(jsonify({'error': e.description if e.description else 'Internal Server Error'}), e.code)
+    return make_response(
+        jsonify({"error": e.description if e.description else "Internal Server Error"}),
+        e.code,
+    )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     app.run(port=5555, debug=True)

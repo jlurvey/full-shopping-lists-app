@@ -6,13 +6,14 @@ from sqlalchemy.ext.associationproxy import association_proxy
 
 from config import db
 
-# CATEGORIES = [{'name': category} for category in ['grocery store', 'hardware store', 'pharmacy', 'convenience store', 'department store']]
-
 
 class Item(db.Model, SerializerMixin):
     __tablename__ = "items"
 
-    serialize_rules = ("-notes.item", "-categories.item",)
+    serialize_rules = (
+        "-notes.item",
+        "-categories.item",
+    )
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=False)
@@ -64,7 +65,7 @@ class Item(db.Model, SerializerMixin):
 
 class Category(db.Model, SerializerMixin):
     __tablename__ = "categories"
-    
+
     serialize_rules = ("-items",)
 
     id = db.Column(db.Integer, primary_key=True)
