@@ -34,9 +34,8 @@ function AddItemForm({ items, categories }) {
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
         let item = { name: values.name, category_id: parseInt(values.category_id), need: true }
-        console.log(item)
         try {
-            await dispatch(addItem(/* { name: values.name, category_id: values.category.id, need: true } */item)).unwrap();
+            await dispatch(addItem(item)).unwrap();
             resetForm();
         } catch (error) {
             console.error("Failed to add item:", error.error);
