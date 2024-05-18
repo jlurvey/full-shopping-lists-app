@@ -13,7 +13,7 @@ function AddItemForm({ items, categories }) {
 
     const initialValues = {
         name: "",
-        category: categories.length > 0 ? categories[0].name : "",
+        category_id: categories.length > 0 ? categories[0].id : "",
     };
 
     const validationSchema = Yup.object().shape({
@@ -24,17 +24,19 @@ function AddItemForm({ items, categories }) {
             .test('name-exists', 'Name already exists', (value) => {
                 return !items.some(item => item.name.trim().toUpperCase() === value.trim().toUpperCase());
             }),
-        category: Yup.string()
+        category_id: Yup.number().integer()
             .required("Category is required")
             .test('valid-category', 'Invalid category, please choose from the predefined categories', (value) => {
-                const categoryNames = categories.map(category => category.name);
-                return categoryNames.includes(value);
+                const categoryIds = categories.map(category => category.id);
+                return categoryIds.includes(value);
             }),
     });
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+        let item = { name: values.name, category_id: parseInt(values.category_id), need: true }
+        console.log(item)
         try {
-            await dispatch(addItem({ name: values.name, category: values.category, need: true })).unwrap();
+            await dispatch(addItem(/* { name: values.name, category_id: values.category.id, need: true } */item)).unwrap();
             resetForm();
         } catch (error) {
             console.error("Failed to add item:", error.error);
@@ -61,15 +63,15 @@ function AddItemForm({ items, categories }) {
                                 <ErrorMessage name="name" component="div" className="error" />
                             </div>
                             <div className="form-column">
-                                <label htmlFor="category">Category:</label>
-                                <Field as="select" name="category" >
+                                <label htmlFor="category_id">Category:</label>
+                                <Field as="select" name="category_id" >
                                     {categories.map((category) => (
-                                        <option key={category.name} value={category.name}>
+                                        <option key={category.name} value={category.id}>
                                             {category.name}
                                         </option>
                                     ))}
                                 </Field>
-                                <ErrorMessage name="category" component="div" className="error" />
+                                <ErrorMessage name="category_id" component="div" className="error" />
                             </div>
                             <button className="add" type="submit" disabled={isSubmitting}>
                                 {isSubmitting ? "Adding..." : "Add Item"}

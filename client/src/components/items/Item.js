@@ -25,7 +25,7 @@ function Item({ item, stores, categories }) {
     return (
         <li className={item.need ? 'need' : 'doNotNeed'}>
             <span className='info'>{item.name}</span>
-            <span className='info'>{item.category}</span>
+            <span className='info'>{item.category.name}</span>
             <span className='info'>
                 <ul>
                     {item.notes

@@ -53,7 +53,7 @@ function AddToStoreForm({ item, stores, onClose }) {
                     <Form className="add">
                         <div className="form-row">
                             <div className="form-column"><label>Item:</label>{item.name}</div>
-                            <div className="form-column"><label>Category:</label>{item.category}</div>
+                            <div className="form-column"><label>Category:</label>{item.category.name}</div>
                             <div className="form-column">
                                 <label htmlFor="store">Store:</label>
                                 <Field as="select" name="store">
