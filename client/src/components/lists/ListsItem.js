@@ -19,7 +19,7 @@ function ListsItem({ item, description }) {
     return (
         <li className={item.need ? 'need' : 'doNotNeed'}>
             <span>{item.name}</span>
-            <span>{item.category}</span>
+            <span>{item.category.name}</span>
             <span>{description}</span>
             <span className='actions'>
                 <button className={item.need ? 'need' : 'doNotNeed'} onClick={handleNeedChange}>

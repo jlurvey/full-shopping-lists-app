@@ -14,7 +14,7 @@ function ListsForm({ stores, selectedStore, categories, items }) {
 
     const initialValues = {
         name: "",
-        category: categories.length > 0 ? categories[0].name : "",
+        category_id: categories.length > 0 ? categories[0].id : "",
         description: "",
         store: selectedStore ? selectedStore.id : "",
     };
@@ -27,11 +27,11 @@ function ListsForm({ stores, selectedStore, categories, items }) {
             .test('name-exists', 'Name already exists', (value) => {
                 return !items.some(item => item.name.trim().toUpperCase() === value.trim().toUpperCase());
             }),
-        category: Yup.string()
+        category_id: Yup.number().integer()
             .required("Category is required")
             .test('valid-category', 'Invalid category, please choose from the predefined categories', (value) => {
-                const categoryNames = categories.map(category => category.name);
-                return categoryNames.includes(value);
+                const categoryIds = categories.map(category => category.id);
+                return categoryIds.includes(value);
             }),
         description: Yup.string()
             .required("Description is required")
@@ -41,10 +41,9 @@ function ListsForm({ stores, selectedStore, categories, items }) {
     });
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+        let item = { name: values.name, category_id: parseInt(values.category_id), need: true }
         try {
-            const addedItem = await dispatch(
-                addItem({ name: values.name, category: values.category, need: true })
-            ).unwrap();
+            const addedItem = await dispatch(addItem(item)).unwrap();
             await dispatch(
                 addNote({
                     description: values.description,
@@ -95,17 +94,15 @@ function ListsForm({ stores, selectedStore, categories, items }) {
                                 
                             </div>
                             <div className="form-column">
-                                <label>
-                                    Category:</label>
-                                    <Field as="select" name="category">
-                                        {categories.map((category) => (
-                                            <option key={category.name} value={category.name}>
-                                                {category.name}
-                                            </option>
-                                        ))}
-                                    </Field>
-                                    <ErrorMessage name="category" component="div" className="error" />
-                                
+                                <label htmlFor="category_id">Category:</label>
+                                <Field as="select" name="category_id" >
+                                    {categories.map((category) => (
+                                        <option key={category.name} value={category.id}>
+                                            {category.name}
+                                        </option>
+                                    ))}
+                                </Field>
+                                <ErrorMessage name="category_id" component="div" className="error" />
                             </div>
                         </div>
                         <div className="form-row">

@@ -37,11 +37,11 @@ function ItemsList() {
             const sortedItems = items
                 .slice()
                 .sort((a, b) => b.need - a.need || a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
-            const sortedCats = categories
+                const sortedStores = stores
                 .slice()
-            const sortedStores = stores
-            .slice()
-            .sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
+                .sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
+                const sortedCats = categories
+                    .slice()
 
             return (
                 <>

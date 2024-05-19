@@ -39,19 +39,6 @@ function Lists() {
     }, [selectedStore, stores, dispatch]);
 
     const renderLists = () => {
-
-        if (itemStatus === "failed") {
-            return <div>{itemError}</div>;
-        }
-
-        if (storeStatus === "failed") {
-            return <div>{storeError}</div>;
-        }
-
-        if (categoryStatus === "failed") {
-            return <div>{categoryError}</div>;
-        }
-
         if (itemStatus === 'succeeded' && storeStatus === 'succeeded'&& selectedStore) {
             const allItems = items.slice()
             const filteredItems = items.slice()
