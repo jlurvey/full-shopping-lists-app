@@ -8,9 +8,9 @@ function Home() {
             <br />
             <p><NavLink to='/items' exact activeClassName="active" className="NavLink">Items:</NavLink> Navigate here to view and manage your list of items. Create, edit, and delete items!</p>
             <br />
-            <p><NavLink to='/stores' exact activeClassName="active" className="NavLink">Stores:</NavLink> Navigate here to view and manage your list of stores. Create and delete stores!</p>
-            <br />
             <p><NavLink to='/Categories' exact activeClassName="active" className="NavLink">Categories:</NavLink> Navigate here to view and manage your list of categories. Create and delete categories!</p>
+            <br />
+            <p><NavLink to='/stores' exact activeClassName="active" className="NavLink">Stores:</NavLink> Navigate here to view and manage your list of stores. Create and delete stores!</p>
             <br />
             <p><NavLink to='/lists' exact activeClassName="active" className="NavLink">Lists:</NavLink> Items filtered by Store! Navigate here to view your lists. Create, edit, and delete items!</p>
             

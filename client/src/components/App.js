@@ -18,14 +18,14 @@ function App() {
                 <Route path='/items'>
                     <ItemsList />
                 </Route>
+                <Route path ='/categories'>
+                    <CategoriesList />
+                </Route>
                 <Route path ='/stores'>
                     <StoresList />
                 </Route>
                 <Route path ='/lists'>
                     <Lists />
-                </Route>
-                <Route path ='/categories'>
-                    <CategoriesList />
                 </Route>
                 <Route exact path ='/'>
                     <Home/>
