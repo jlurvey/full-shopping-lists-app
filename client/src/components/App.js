@@ -23,6 +23,9 @@ function App() {
                 <Route path ='/lists'>
                     <Lists />
                 </Route>
+                <Route path ='/categories'>
+                    <Categories />
+                </Route>
                 <Route exact path ='/'>
                     <Home/>
                 </Route>
