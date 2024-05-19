@@ -6,6 +6,7 @@ import NavBar from "./NavBar";
 import ItemsList from "./items/ItemsList";
 import StoresList from "./stores/StoresList";
 import Lists from "./lists/Lists";
+import CategoriesList from "./categories/CategoriesList";
 import Home from "./Home";
 
 function App() {
@@ -24,7 +25,7 @@ function App() {
                     <Lists />
                 </Route>
                 <Route path ='/categories'>
-                    <Categories />
+                    <CategoriesList />
                 </Route>
                 <Route exact path ='/'>
                     <Home/>
