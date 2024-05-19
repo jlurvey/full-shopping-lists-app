@@ -39,23 +39,23 @@ function Lists() {
     }, [selectedStore, stores, dispatch]);
 
     const renderLists = () => {
-        if (itemStatus === 'succeeded' && storeStatus === 'succeeded'&& selectedStore) {
+        if (itemStatus === 'succeeded' && storeStatus === 'succeeded' && selectedStore) {
             const allItems = items.slice()
             const filteredItems = items.slice()
                 .filter(item => item.notes.some(note => note.store.id === selectedStore.id))
                 .sort((a, b) => b.need - a.need || a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
             const sortedStores = stores.slice()
                 .sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
-            const sortedCats = categories
-                .slice()
+            const sortedCats = categories.slice()
+                .sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
 
             return (
                 <>
-                    <ListsForm 
-                    stores={sortedStores} 
-                    selectedStore={selectedStore} 
-                    categories={sortedCats} 
-                    items={allItems} />
+                    <ListsForm
+                        stores={sortedStores}
+                        selectedStore={selectedStore}
+                        categories={sortedCats}
+                        items={allItems} />
                     <li className='topRow'>
                         <span>Item Name</span>
                         <span>Category</span>
