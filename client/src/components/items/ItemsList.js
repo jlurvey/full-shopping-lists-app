@@ -42,6 +42,7 @@ function ItemsList() {
                 .sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
                 const sortedCats = categories
                     .slice()
+                    .sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()))
 
             return (
                 <>
