@@ -3,14 +3,20 @@
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.orm import validates
 from sqlalchemy.ext.associationproxy import association_proxy
-# from flask_bcrypt import Bcrypt
 
-from config import db
+from config import db, Bcrypt
 
-# class User
-# username
-# _password
-# email
+class User(db.Model, SerializerMixin):
+    __tablename__ = "users"
+    
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String, unique=True, nullable=False)
+    _password_hash = db.Column(db.String)
+    
+    items = db.relationship("Item", back_populates="user", cascade="all, delete-orphan")
+    categories = db.relationship("Category", back_populates="user", cascade="all, delete-orphan")
+    stores = db.relationship("Store", back_populates="user", cascade="all, delete-orphan")
+    notes = db.relationship("Note", back_populates="user", cascade="all, delete-orphan")
 
 
 # many to many relationship with all other tables
