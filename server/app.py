@@ -20,6 +20,8 @@ from models import Item, Store, Note, Category
 def index():
     return "<h1>Project Server</h1>"
 
+# check session
+
 
 class ItemIndex(Resource):
     def get(self):

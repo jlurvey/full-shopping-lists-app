@@ -3,8 +3,18 @@
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.orm import validates
 from sqlalchemy.ext.associationproxy import association_proxy
+# from flask_bcrypt import Bcrypt
 
 from config import db
+
+# class User
+# username
+# _password
+# email
+
+
+# many to many relationship with all other tables
+# users are only able to view other tables with their logged in user_id
 
 
 class Item(db.Model, SerializerMixin):
