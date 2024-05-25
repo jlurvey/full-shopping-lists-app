@@ -42,6 +42,20 @@ class CheckSession(Resource):
         if user_id:
             user = User.query.filter(User.id == user_id).first()
             return make_response(jsonify(user.to_dict()), 200)
+        
+        
+class Login(Resource):
+    def post(self):
+        data = request.get_json()
+        user = User.query.filter(User.email == data["email"]).first()
+        password = data["password"]
+        try:
+            if user and user.check_password(password):
+                session["user_id"] = user.id
+                return make_response(user.to_dict(), 201)
+        except Exception as e:
+            db.session.rollback()
+            return handle_error(e)
 
 
 class ItemIndex(Resource):
@@ -244,6 +258,7 @@ class NoteById(Resource):
 
 api.add_resource(Signup, "/signup", endpoint = "signup")
 api.add_resource(CheckSession, '/check_session', endpoint='check_session')
+api.add_resource(Login, '/login', endpoint='login')
 api.add_resource(ItemIndex, "/items", endpoint="items")
 api.add_resource(ItemById, "/items/<int:id>", endpoint="items/<int:id>")
 api.add_resource(StoreIndex, "/stores", endpoint="stores")
