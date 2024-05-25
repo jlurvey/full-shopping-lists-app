@@ -12,7 +12,7 @@ from werkzeug.exceptions import BadRequest, HTTPException, NotFound
 from config import app, db, api
 
 # Add your model imports
-from models import Item, Store, Note, Category
+from models import Item, Store, Note, Category, User
 
 
 # Views go here!
@@ -20,7 +20,22 @@ from models import Item, Store, Note, Category
 def index():
     return "<h1>Project Server</h1>"
 
-# check session
+class Signup(Resource):
+    def post(self):
+        data = request.get_json()
+        try:
+            new_user = User(
+                email=data["email"],
+                password=data["password"],
+            )
+            db.session.add(new_user)
+            db.session.commit()
+            return make_response(new_user.to_dict(), 201)
+        except Exception as e:
+            db.session.rollback()
+            return handle_error(e)
+        
+        
 
 
 class ItemIndex(Resource):
@@ -221,6 +236,7 @@ class NoteById(Resource):
             return handle_error(e)
 
 
+api.add_resource(Signup, "/signup", endpoint = "signup")
 api.add_resource(ItemIndex, "/items", endpoint="items")
 api.add_resource(ItemById, "/items/<int:id>", endpoint="items/<int:id>")
 api.add_resource(StoreIndex, "/stores", endpoint="stores")
