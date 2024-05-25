@@ -4,7 +4,7 @@
 # Standard library imports
 
 # Remote library imports
-from flask import jsonify, make_response, request
+from flask import jsonify, make_response, request, session
 from flask_restful import Resource
 from werkzeug.exceptions import BadRequest, HTTPException, NotFound
 
@@ -35,7 +35,13 @@ class Signup(Resource):
             db.session.rollback()
             return handle_error(e)
         
-        
+
+class CheckSession(Resource):
+    def get(self):
+        user_id = session.get("user_id")
+        if user_id:
+            user = User.query.filter(User.id == user_id).first()
+            return make_response(jsonify(user.to_dict()), 200)
 
 
 class ItemIndex(Resource):
@@ -237,6 +243,7 @@ class NoteById(Resource):
 
 
 api.add_resource(Signup, "/signup", endpoint = "signup")
+api.add_resource(CheckSession, '/check_session', endpoint='check_session')
 api.add_resource(ItemIndex, "/items", endpoint="items")
 api.add_resource(ItemById, "/items/<int:id>", endpoint="items/<int:id>")
 api.add_resource(StoreIndex, "/stores", endpoint="stores")
