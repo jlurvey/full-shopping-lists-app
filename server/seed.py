@@ -9,7 +9,7 @@ from faker import Faker
 
 # Local imports
 from app import app
-from models import db, Item, Store, Note, Category
+from models import db, Item, Store, Note, Category, User
 
 if __name__ == "__main__":
 
@@ -21,8 +21,23 @@ if __name__ == "__main__":
         Store.query.delete()
         Note.query.delete()
         Category.query.delete()
+        User.query.delete()
 
         print("Starting seed...")
+
+        print("Creating 2 users")
+        users = []
+        user_emails = []
+        while len(users) < 2:
+            email = fake.email()
+            while email in user_emails:
+                email = fake.email()
+            password = fake.password()
+            user_emails.append(email)
+            user = User(email=email, password=password)
+            users.append(user)
+        db.session.add_all(users)
+        db.session.commit()
 
         print("Creating 5 categories")
         categories = []
@@ -33,9 +48,9 @@ if __name__ == "__main__":
             "convenience store",
             "department store",
         ]:
-            category = Category(name=category_name)
+            category = Category(name=category_name, user=rc(users))
+            db.session.add(category)
             categories.append(category)
-        db.session.add_all(categories)
         db.session.commit()
 
         print("Creating 20 items...")
@@ -49,7 +64,12 @@ if __name__ == "__main__":
                 name = fake.word()
             category = rc(categories)
             item_names.append(name)
-            item = Item(name=name, category_id=category.id, need=fake.boolean())
+            item = Item(
+                name=name,
+                category_id=category.id,
+                need=fake.boolean(),
+                user_id=category.user_id,
+            )
             db.session.add(item)
             items.append(item)
         db.session.commit()
@@ -62,9 +82,9 @@ if __name__ == "__main__":
             while name in store_names:
                 name = fake.company()
             store_names.append(name)
-            store = Store(name=name)
+            store = Store(name=name, user=rc(users))
+            db.session.add(store)
             stores.append(store)
-        db.session.add_all(stores)
         db.session.commit()
 
         print("Creating 15 notes...")
@@ -74,12 +94,20 @@ if __name__ == "__main__":
         while len(notes) < 15:
             item = rc(items)
             store = rc(stores)
+            if item.user_id != store.user_id:
+                continue
             existing_note = Note.query.filter_by(
                 item_id=item.id, store_id=store.id
             ).first()
             if existing_note:
                 continue
-            note = Note(item_id=item.id, store_id=store.id, description=fake.text())
+            print(f"Creating note for Item {item.id} (User {item.user_id}) and Store {store.id} (User {store.user_id})")
+            note = Note(
+                item_id=item.id,
+                store_id=store.id,
+                description=fake.text(),
+                user_id = item.user_id,
+            )
             db.session.add(note)
             notes.append(note)
         db.session.commit()
