@@ -3,24 +3,50 @@
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.orm import validates
 from sqlalchemy.ext.associationproxy import association_proxy
+import re
 
-from config import db, Bcrypt
+from config import db, bcrypt
+
 
 class User(db.Model, SerializerMixin):
     __tablename__ = "users"
-    
+
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String, unique=True, nullable=False)
     _password_hash = db.Column(db.String)
-    
+
     items = db.relationship("Item", back_populates="user", cascade="all, delete-orphan")
     categories = db.relationship("Category", back_populates="user", cascade="all, delete-orphan")
     stores = db.relationship("Store", back_populates="user", cascade="all, delete-orphan")
     notes = db.relationship("Note", back_populates="user", cascade="all, delete-orphan")
 
+    @property
+    def password(self):
+        raise AttributeError("Password is not a readable attribute")
 
-# many to many relationship with all other tables
-# users are only able to view other tables with their logged in user_id
+    @password.setter
+    def password(self, password):
+        self._password_hash = bcrypt.generate_password_hash(password).decode("utf-8")
+
+    def check_password(self, password):
+        return bcrypt.check_password_hash(self._password_hash, password.encode("utf-8"))
+
+    @validates("email")
+    def validate_email(self, key, email):
+        if not email:
+            raise ValueError("Email is required")
+        email_regex = r"^\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"
+        if not re.match(email_regex, email):
+            raise ValueError("Invalid email format")
+        existing_user = User.query.filter(
+            db.func.lower(User.email) == db.func.lower(email)
+        ).first()
+        if existing_user and existing_user.id != self.id:
+            raise ValueError("email already exists")
+        return email
+
+    def __repr__(self):
+        return f"<User {self.id}, {self.email}>"
 
 
 class Item(db.Model, SerializerMixin):
@@ -40,11 +66,14 @@ class Item(db.Model, SerializerMixin):
     # relationship mapping item to related category
     category = db.relationship("Category", back_populates="items")
 
+    # Foreign key stores User id
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    # Relationship mapping item to related user
+    user = db.relationship("User", back_populates="items")
+
     # many-to-many relationship with stores through notes
     notes = db.relationship("Note", back_populates="item", cascade="all, delete-orphan")
-    stores = association_proxy(
-        "notes", "store", creator=lambda store_obj: Note(store=store_obj)
-    )
+    stores = association_proxy("notes", "store", creator=lambda store_obj: Note(store=store_obj))
 
     @validates("name")
     def validate_name(self, key, name):
@@ -67,6 +96,14 @@ class Item(db.Model, SerializerMixin):
             raise ValueError(f"{key} must be an integer")
         return value
 
+    @validates("user_id")
+    def validate_user_id(self, key, value):
+        if value is None:
+            raise ValueError(f"{key} is required")
+        elif not isinstance(value, int):
+            raise ValueError(f"{key} must be an integer")
+        return value
+
     @validates("need")
     def validate_need(self, key, need):
         if need is None:
@@ -76,7 +113,7 @@ class Item(db.Model, SerializerMixin):
         return need
 
     def __repr__(self):
-        return f"<Item {self.id}, {self.name}, Category: {self.category.id}, Need: {self.need}>"
+        return f"<Item {self.id}, {self.name}, Category: {self.category.id}, Need: {self.need}, User: {self.user.id}>"
 
 
 class Category(db.Model, SerializerMixin):
@@ -87,9 +124,12 @@ class Category(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=False)
     # relationship mapping category to related item
-    items = db.relationship(
-        "Item", back_populates="category", cascade="all, delete-orphan"
-    )
+    items = db.relationship("Item", back_populates="category", cascade="all, delete-orphan")
+
+    # Foreign key stores User id
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    # Relationship mapping item to related user
+    user = db.relationship("User", back_populates="categories")
 
     @validates("name")
     def validate_name(self, key, name):
@@ -104,8 +144,16 @@ class Category(db.Model, SerializerMixin):
             raise ValueError("category name already exists")
         return name
 
+    @validates("user_id")
+    def validate_user_id(self, key, value):
+        if value is None:
+            raise ValueError(f"{key} is required")
+        elif not isinstance(value, int):
+            raise ValueError(f"{key} must be an integer")
+        return value
+
     def __repr__(self):
-        return f"<Category {self.id}, {self.name}>"
+        return f"<Category {self.id}, {self.name}, User: {self.user.id}>"
 
 
 class Store(db.Model, SerializerMixin):
@@ -116,12 +164,13 @@ class Store(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=False)
 
-    notes = db.relationship(
-        "Note", back_populates="store", cascade="all, delete-orphan"
-    )
-    items = association_proxy(
-        "notes", "item", creator=lambda item_obj: Note(item=item_obj)
-    )
+    notes = db.relationship("Note", back_populates="store", cascade="all, delete-orphan")
+    items = association_proxy("notes", "item", creator=lambda item_obj: Note(item=item_obj))
+
+    # Foreign key stores User id
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    # Relationship mapping item to related user
+    user = db.relationship("User", back_populates="stores")
 
     @validates("name")
     def validate_name(self, key, name):
@@ -136,8 +185,16 @@ class Store(db.Model, SerializerMixin):
             raise ValueError("store name already exists")
         return name
 
+    @validates("user_id")
+    def validate_user_id(self, key, value):
+        if value is None:
+            raise ValueError(f"{key} is required")
+        elif not isinstance(value, int):
+            raise ValueError(f"{key} must be an integer")
+        return value
+
     def __repr__(self):
-        return f"<Store {self.id}, {self.name}>"
+        return f"<Store {self.id}, {self.name}, User: {self.user.id}>"
 
 
 # association model for items and stores
@@ -154,6 +211,9 @@ class Note(db.Model, SerializerMixin):
 
     store_id = db.Column(db.Integer, db.ForeignKey("stores.id"), nullable=False)
     store = db.relationship("Store", back_populates="notes")
+    
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user = db.relationship("User", back_populates="notes")
 
     @validates("description")
     def validate_description(self, key, description):
@@ -170,19 +230,49 @@ class Note(db.Model, SerializerMixin):
         elif not isinstance(value, int):
             raise ValueError(f"{key} must be an integer")
 
-        existing_note = Note.query.filter_by(
-            item_id=value if key == "item_id" else self.item_id,
-            store_id=value if key == "store_id" else self.store_id,
-        ).first()
-        if existing_note and existing_note.id != self.id:
-            raise ValueError(
-                "note for this combination of item and store already exists"
-            )
-
+        if key in ["item_id","store_id"]:
+            existing_note = Note.query.filter_by(
+                item_id=value if key == "item_id" else self.item_id,
+                store_id=value if key == "store_id" else self.store_id,
+            ).first()
+            if existing_note and existing_note.id != self.id:
+                raise ValueError(
+                    "note for this combination of item and store already exists"
+                )
+        
         if key == "item_id":
             Item.query.get(value)
+        #     if item.user_id != self.user_id:
+        #         raise ValueError("Item and Note must belong to the same user")
         elif key == "store_id":
             Store.query.get(value)
+        #     if store.user_id != self.user_id:
+        #         raise ValueError("Store and Note must belong to the same user")
+            
+
+    # # Ensure the item_id and store_id exist in their respective tables
+    #     if key == "item_id":
+    #         item = Item.query.get(value)
+    #         if not item:
+    #             raise ValueError(f"{key} does not exist")
+    #         # Ensure the user_id of the item matches the user_id of the note
+    #         if hasattr(self, 'user_id') and self.user_id is not None and item.user_id != self.user_id:
+    #             raise ValueError(f"{key} belongs to a different user")
+    #     elif key == "store_id":
+    #         store = Store.query.get(value)
+    #         if not store:
+    #             raise ValueError(f"{key} does not exist")
+    #         # Ensure the user_id of the store matches the user_id of the note
+    #         if hasattr(self, 'user_id') and self.user_id is not None and store.user_id != self.user_id:
+    #             raise ValueError(f"{key} belongs to a different user")
+    #     # Ensure the user_id of the note is consistent with item and store user_ids
+    #     if key == "user_id":
+    #         item = Item.query.get(self.item_id)
+    #         store = Store.query.get(self.store_id)
+    #         if item and item.user_id != value:
+    #             raise ValueError("user_id of the item does not match the user_id of the note")
+    #         if store and store.user_id != value:
+    #             raise ValueError("user_id of the store does not match the user_id of the note")
 
         return value
 
