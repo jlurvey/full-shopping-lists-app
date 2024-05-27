@@ -58,6 +58,23 @@ class Login(Resource):
             return handle_error(e)
 
 
+class Logout(Resource):
+    def delete(self):
+        user_id = session.gert("user_id")
+        
+        if user_id is not None:
+            session["user_id"] = None
+        
+        try:
+            if user_id is not None:
+                session["user_id"] = None
+            make_response("", 204)
+        except Exception as e:
+            db.session.rollback()
+            return handle_error(e)
+            
+    
+
 class ItemIndex(Resource):
     def get(self):
         # items alphabetically
@@ -259,6 +276,7 @@ class NoteById(Resource):
 api.add_resource(Signup, "/signup", endpoint = "signup")
 api.add_resource(CheckSession, '/check_session', endpoint='check_session')
 api.add_resource(Login, '/login', endpoint='login')
+api.add_resource(Logout, '/logout', endpoint='logout')
 api.add_resource(ItemIndex, "/items", endpoint="items")
 api.add_resource(ItemById, "/items/<int:id>", endpoint="items/<int:id>")
 api.add_resource(StoreIndex, "/stores", endpoint="stores")
