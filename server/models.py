@@ -61,7 +61,7 @@ class Item(db.Model, SerializerMixin):
     )
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, unique=True, nullable=False)
+    name = db.Column(db.String, nullable=False)
     need = db.Column(db.Boolean, default=True, nullable=False)
 
     # Foreign key stores Category id
@@ -85,7 +85,8 @@ class Item(db.Model, SerializerMixin):
         if not isinstance(name, str) or not name.strip():
             raise ValueError("item name must be a non-empty string")
         existing_item = Item.query.filter(
-            db.func.lower(Item.name) == db.func.lower(name)
+            db.func.lower(Item.name) == db.func.lower(name),
+            Item.user_id == self.user_id
         ).first()
         if existing_item and existing_item.id != self.id:
             raise ValueError("item name already exists")
@@ -125,7 +126,7 @@ class Category(db.Model, SerializerMixin):
     serialize_rules = ("-items",)
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, unique=True, nullable=False)
+    name = db.Column(db.String, nullable=False)
     # relationship mapping category to related item
     items = db.relationship("Item", back_populates="category", cascade="all, delete-orphan")
 
@@ -141,7 +142,8 @@ class Category(db.Model, SerializerMixin):
         if not isinstance(name, str) or not name.strip():
             raise ValueError("category name must be a non-empty string")
         existing_category = Category.query.filter(
-            db.func.lower(Category.name) == db.func.lower(name)
+            db.func.lower(Category.name) == db.func.lower(name),
+            Category.user_id == self.user_id
         ).first()
         if existing_category and existing_category.id != self.id:
             raise ValueError("category name already exists")
@@ -165,7 +167,7 @@ class Store(db.Model, SerializerMixin):
     serialize_rules = ("-notes.store",)
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, unique=True, nullable=False)
+    name = db.Column(db.String, nullable=False)
 
     notes = db.relationship("Note", back_populates="store", cascade="all, delete-orphan")
     items = association_proxy("notes", "item", creator=lambda item_obj: Note(item=item_obj))
@@ -182,7 +184,8 @@ class Store(db.Model, SerializerMixin):
         if not isinstance(name, str) or not name.strip():
             raise ValueError("store name must be a non-empty string")
         existing_store = Store.query.filter(
-            db.func.lower(Store.name) == db.func.lower(name)
+            db.func.lower(Store.name) == db.func.lower(name),
+            Store.user_id == self.user_id
         ).first()
         if existing_store and existing_store.id != self.id:
             raise ValueError("store name already exists")
