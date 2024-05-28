@@ -20,6 +20,7 @@ from models import Item, Store, Note, Category, User
 def index():
     return "<h1>Project Server</h1>"
 
+
 class Signup(Resource):
     def post(self):
         data = request.get_json()
@@ -60,11 +61,9 @@ class Login(Resource):
 
 class Logout(Resource):
     def delete(self):
-        user_id = session.gert("user_id")
-        
+        user_id = session.get("user_id")
         if user_id is not None:
             session["user_id"] = None
-        
         try:
             if user_id is not None:
                 session["user_id"] = None
@@ -72,22 +71,25 @@ class Logout(Resource):
         except Exception as e:
             db.session.rollback()
             return handle_error(e)
-            
     
 
 class ItemIndex(Resource):
     def get(self):
-        # items alphabetically
-        items = [item.to_dict() for item in Item.query.order_by(Item.name).all()]
+        user_id = session.get("user_id")
+        if user_id is None:
+            return make_response(jsonify({"error": "Unauthorized"}), 401)
+        items = [item.to_dict() for item in Item.query.filter_by(user_id=user_id).order_by(Item.name).all()]
         return make_response(jsonify(items), 200)
 
     def post(self):
+        user_id = session.get("user_id")
         data = request.get_json()
         try:
             new_item = Item(
                 name=data["name"],
                 category_id=data["category_id"],
                 need=data["need"],
+                user_id=user_id
             )
             db.session.add(new_item)
             db.session.commit()
@@ -128,17 +130,20 @@ class ItemById(Resource):
 
 class CategoryIndex(Resource):
     def get(self):
-        # categories alphabetically
-        categories = [
-            category.to_dict()
-            for category in Category.query.order_by(Category.name).all()
-        ]
+        user_id = session.get("user_id")
+        if user_id is None:
+            return make_response(jsonify({"error": "Unauthorized"}), 401)
+        categories = [category.to_dict() for category in Category.query.filter_by(user_id=user_id).order_by(Category.name).all()]
         return make_response(jsonify(categories), 200)
 
     def post(self):
+        user_id = session.get("user_id")
         data = request.get_json()
         try:
-            new_category = Category(name=data["name"])
+            new_category = Category(
+                name=data["name"],
+                user_id=user_id
+                )
             db.session.add(new_category)
             db.session.commit()
             return make_response(new_category.to_dict(), 201)
@@ -178,14 +183,20 @@ class CategoryById(Resource):
 
 class StoreIndex(Resource):
     def get(self):
-        # stores alphabetically
-        stores = [store.to_dict() for store in Store.query.order_by(Store.name).all()]
+        user_id = session.get("user_id")
+        if user_id is None:
+            return make_response(jsonify({"error": "Unauthorized"}), 401)
+        stores = [store.to_dict() for store in Store.query.filter_by(user_id=user_id).order_by(Store.name).all()]
         return make_response(jsonify(stores), 200)
 
     def post(self):
+        user_id = session.get("user_id")
         data = request.get_json()
         try:
-            new_store = Store(name=data["name"])
+            new_store = Store(
+                name=data["name"],
+                user_id=user_id
+                )
             db.session.add(new_store)
             db.session.commit()
             return make_response(new_store.to_dict(), 201)
@@ -225,16 +236,21 @@ class StoreById(Resource):
 
 class NoteIndex(Resource):
     def get(self):
-        notes = [note.to_dict() for note in Note.query.all()]
+        user_id = session.get("user_id")
+        if user_id is None:
+            return make_response(jsonify({"error": "Unauthorized"}), 401)
+        notes = [note.to_dict() for note in Note.query.filter_by(user_id=user_id).all()]
         return make_response(jsonify(notes), 200)
 
     def post(self):
+        user_id = session.get("user_id")
         data = request.get_json()
         try:
             new_note = Note(
                 description=data["description"],
                 item_id=data["item_id"],
                 store_id=data["store_id"],
+                user_id=user_id
             )
             db.session.add(new_note)
             db.session.commit()
