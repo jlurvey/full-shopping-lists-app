@@ -26,10 +26,13 @@ class User(db.Model, SerializerMixin):
 
     @password.setter
     def password(self, password):
+        if not password:
+            raise ValueError("Password is required")
         self._password_hash = bcrypt.generate_password_hash(password).decode("utf-8")
 
     def check_password(self, password):
-        return bcrypt.check_password_hash(self._password_hash, password.encode("utf-8"))
+        if not bcrypt.check_password_hash(self._password_hash, password.encode("utf-8")):
+            raise ValueError("Password is incorrect, please try again")
 
     @validates("email")
     def validate_email(self, key, email):
