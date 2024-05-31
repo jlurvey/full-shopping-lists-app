@@ -101,7 +101,7 @@ if __name__ == "__main__":
             ).first()
             if existing_note:
                 continue
-            print(f"Creating note for Item {item.id} (User {item.user_id}) and Store {store.id} (User {store.user_id})")
+            # print(f"Creating note for Item {item.id} (User {item.user_id}) and Store {store.id} (User {store.user_id})")
             note = Note(
                 item_id=item.id,
                 store_id=store.id,
