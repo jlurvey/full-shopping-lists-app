@@ -10,6 +10,10 @@ from config import db, bcrypt
 
 class User(db.Model, SerializerMixin):
     __tablename__ = "users"
+    
+    serialize_rules = (
+        "-categories", "-items", "-stores", "-notes"
+    )
 
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String, unique=True, nullable=False)
@@ -54,10 +58,7 @@ class User(db.Model, SerializerMixin):
 class Item(db.Model, SerializerMixin):
     __tablename__ = "items"
 
-    serialize_rules = (
-        "-notes.item",
-        "-categories.item",
-    )
+    serialize_rules = ("-notes.item", "-categories.item", "-user")
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
@@ -83,12 +84,12 @@ class Item(db.Model, SerializerMixin):
             raise ValueError("item name is required")
         if not isinstance(name, str) or not name.strip():
             raise ValueError("item name must be a non-empty string")
-        existing_item = Item.query.filter(
-            db.func.lower(Item.name) == db.func.lower(name),
-            Item.user_id == self.user_id
-        ).first()
-        if existing_item and existing_item.id != self.id:
-            raise ValueError("item name already exists")
+        # existing_item = Item.query.filter(
+        #     db.func.lower(Item.name) == db.func.lower(name),
+        #     Item.user_id == self.user_id
+        # ).first()
+        # if existing_item and existing_item.id != self.id:
+        #     raise ValueError("item name already exists")
         return name
 
     @validates("category_id")
@@ -122,7 +123,7 @@ class Item(db.Model, SerializerMixin):
 class Category(db.Model, SerializerMixin):
     __tablename__ = "categories"
 
-    serialize_rules = ("-items",)
+    serialize_rules = ("-items", "-user")
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
@@ -133,21 +134,7 @@ class Category(db.Model, SerializerMixin):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     # Relationship mapping item to related user
     user = db.relationship("User", back_populates="categories")
-
-    @validates("name")
-    def validate_name(self, key, name):
-        if not name:
-            raise ValueError("category name is requried")
-        if not isinstance(name, str) or not name.strip():
-            raise ValueError("category name must be a non-empty string")
-        existing_category = Category.query.filter(
-            db.func.lower(Category.name) == db.func.lower(name),
-            Category.user_id == self.user_id
-        ).first()
-        if existing_category and existing_category.id != self.id:
-            raise ValueError("category name already exists")
-        return name
-
+    
     @validates("user_id")
     def validate_user_id(self, key, value):
         if value is None:
@@ -156,6 +143,20 @@ class Category(db.Model, SerializerMixin):
             raise ValueError(f"{key} must be an integer")
         return value
 
+    @validates("name")
+    def validate_name(self, key, name):
+        if not name:
+            raise ValueError("category name is requried")
+        if not isinstance(name, str) or not name.strip():
+            raise ValueError("category name must be a non-empty string")
+        # if self.user_id is None:
+        #     raise ValueError("User ID must be set before validating name")
+        # existing_category = Category.query.filter_by(name=name, user_id=self.user_id).first()
+        # if existing_category:
+        #     raise ValueError("category name already exists")
+        return name
+
+
     def __repr__(self):
         return f"<Category {self.id}, {self.name}, User: {self.user.id}>"
 
@@ -163,7 +164,7 @@ class Category(db.Model, SerializerMixin):
 class Store(db.Model, SerializerMixin):
     __tablename__ = "stores"
 
-    serialize_rules = ("-notes.store",)
+    serialize_rules = ("-notes.store", "-user")
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
@@ -182,12 +183,12 @@ class Store(db.Model, SerializerMixin):
             raise ValueError("store name is requried")
         if not isinstance(name, str) or not name.strip():
             raise ValueError("store name must be a non-empty string")
-        existing_store = Store.query.filter(
-            db.func.lower(Store.name) == db.func.lower(name),
-            Store.user_id == self.user_id
-        ).first()
-        if existing_store and existing_store.id != self.id:
-            raise ValueError("store name already exists")
+        # existing_store = Store.query.filter(
+        #     db.func.lower(Store.name) == db.func.lower(name),
+        #     Store.user_id == self.user_id
+        # ).first()
+        # if existing_store and existing_store.id != self.id:
+        #     raise ValueError("store name already exists")
         return name
 
     @validates("user_id")
@@ -206,7 +207,7 @@ class Store(db.Model, SerializerMixin):
 class Note(db.Model, SerializerMixin):
     __tablename__ = "notes"
 
-    serialize_rules = ("-item.notes", "-store.notes")
+    serialize_rules = ("-item.notes", "-store.notes", "-user")
 
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String)
@@ -234,51 +235,6 @@ class Note(db.Model, SerializerMixin):
             raise ValueError(f"{key} is required")
         elif not isinstance(value, int):
             raise ValueError(f"{key} must be an integer")
-
-        if key in ["item_id","store_id"]:
-            existing_note = Note.query.filter_by(
-                item_id=value if key == "item_id" else self.item_id,
-                store_id=value if key == "store_id" else self.store_id,
-            ).first()
-            if existing_note and existing_note.id != self.id:
-                raise ValueError(
-                    "note for this combination of item and store already exists"
-                )
-        
-        if key == "item_id":
-            Item.query.get(value)
-        #     if item.user_id != self.user_id:
-        #         raise ValueError("Item and Note must belong to the same user")
-        elif key == "store_id":
-            Store.query.get(value)
-        #     if store.user_id != self.user_id:
-        #         raise ValueError("Store and Note must belong to the same user")
-            
-
-    # # Ensure the item_id and store_id exist in their respective tables
-    #     if key == "item_id":
-    #         item = Item.query.get(value)
-    #         if not item:
-    #             raise ValueError(f"{key} does not exist")
-    #         # Ensure the user_id of the item matches the user_id of the note
-    #         if hasattr(self, 'user_id') and self.user_id is not None and item.user_id != self.user_id:
-    #             raise ValueError(f"{key} belongs to a different user")
-    #     elif key == "store_id":
-    #         store = Store.query.get(value)
-    #         if not store:
-    #             raise ValueError(f"{key} does not exist")
-    #         # Ensure the user_id of the store matches the user_id of the note
-    #         if hasattr(self, 'user_id') and self.user_id is not None and store.user_id != self.user_id:
-    #             raise ValueError(f"{key} belongs to a different user")
-    #     # Ensure the user_id of the note is consistent with item and store user_ids
-    #     if key == "user_id":
-    #         item = Item.query.get(self.item_id)
-    #         store = Store.query.get(self.store_id)
-    #         if item and item.user_id != value:
-    #             raise ValueError("user_id of the item does not match the user_id of the note")
-    #         if store and store.user_id != value:
-    #             raise ValueError("user_id of the store does not match the user_id of the note")
-
         return value
 
     def __repr__(self):
