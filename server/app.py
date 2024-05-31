@@ -108,17 +108,13 @@ class ItemIndex(Resource):
 class ItemById(Resource):
     def get(self, id):
         user_id = session.get("user_id")
-        if user_id is None:
-            return make_response(jsonify({"error": "Unauthorized"}), 401)  
-        item = check_id(Item, id)
+        item = check_id(Item, id, user_id)
         return make_response(jsonify(item.to_dict()), 200)
 
     def patch(self, id):
         user_id = session.get("user_id")
-        if user_id is None:
-            return make_response(jsonify({"error": "Unauthorized"}), 401)  
+        item = check_id(Item, id, user_id)
         data = request.get_json()
-        item = check_id(Item, id)
         try:
             for attr in data:
                 setattr(item, attr, data[attr])
@@ -131,9 +127,7 @@ class ItemById(Resource):
 
     def delete(self, id):
         user_id = session.get("user_id")
-        if user_id is None:
-            return make_response(jsonify({"error": "Unauthorized"}), 401)        
-        item = check_id(Item, id)
+        item = check_id(Item, id, user_id)
         try:
             db.session.delete(item)
             db.session.commit()
@@ -173,17 +167,13 @@ class CategoryIndex(Resource):
 class CategoryById(Resource):
     def get(self, id):
         user_id = session.get("user_id")
-        if user_id is None:
-            return make_response(jsonify({"error": "Unauthorized"}), 401)        
-        category = check_id(Category, id)
+        category = check_id(Category, id, user_id)
         return make_response(jsonify(category.to_dict()), 200)
 
     def patch(self, id):
         user_id = session.get("user_id")
-        if user_id is None:
-            return make_response(jsonify({"error": "Unauthorized"}), 401)        
+        category = check_id(Category, id, user_id)
         data = request.get_json()
-        category = check_id(Category, id)
         try:
             for attr in data:
                 setattr(category, attr, data[attr])
@@ -196,9 +186,7 @@ class CategoryById(Resource):
 
     def delete(self, id):
         user_id = session.get("user_id")
-        if user_id is None:
-            return make_response(jsonify({"error": "Unauthorized"}), 401)        
-        category = check_id(Category, id)
+        category = check_id(Category, id, user_id)
         try:
             db.session.delete(category)
             db.session.commit()
@@ -238,17 +226,13 @@ class StoreIndex(Resource):
 class StoreById(Resource):
     def get(self, id):
         user_id = session.get("user_id")
-        if user_id is None:
-            return make_response(jsonify({"error": "Unauthorized"}), 401)        
-        store = check_id(Store, id)
+        store = check_id(Store, id, user_id)
         return make_response(jsonify(store.to_dict()), 200)
 
     def patch(self, id):
         user_id = session.get("user_id")
-        if user_id is None:
-            return make_response(jsonify({"error": "Unauthorized"}), 401)        
+        store = check_id(Store, id, user_id)
         data = request.get_json()
-        store = check_id(Store, id)
         try:
             for attr in data:
                 setattr(store, attr, data[attr])
@@ -261,9 +245,7 @@ class StoreById(Resource):
 
     def delete(self, id):
         user_id = session.get("user_id")
-        if user_id is None:
-            return make_response(jsonify({"error": "Unauthorized"}), 401)        
-        store = check_id(Store, id)
+        store = check_id(Store, id, user_id)
         try:
             db.session.delete(store)
             db.session.commit()
@@ -316,17 +298,13 @@ class NoteIndex(Resource):
 class NoteById(Resource):
     def get(self, id):
         user_id = session.get("user_id")
-        if user_id is None:
-            return make_response(jsonify({"error": "Unauthorized"}), 401)         
-        note = check_id(Note, id)
+        note = check_id(Note, id, user_id)
         return make_response(jsonify(note.to_dict()), 200)
 
     def patch(self, id):
         user_id = session.get("user_id")
-        if user_id is None:
-            return make_response(jsonify({"error": "Unauthorized"}), 401)        
+        note = check_id(Note, id, user_id)
         data = request.get_json()
-        note = check_id(Note, id)
         try:
             for attr in data:
                 setattr(note, attr, data[attr])
@@ -339,9 +317,7 @@ class NoteById(Resource):
 
     def delete(self, id):
         user_id = session.get("user_id")
-        if user_id is None:
-            return make_response(jsonify({"error": "Unauthorized"}), 401)        
-        note = check_id(Note, id)
+        note = check_id(Note, id, user_id)
         try:
             db.session.delete(note)
             db.session.commit()
@@ -382,7 +358,9 @@ def handle_error(e):
 
 
 # For all ById resources, check id exists, return error message if not
-def check_id(model, id):
+def check_id(model, id, user_id):
+    if user_id is None:
+            return make_response({"error": "Unauthorized"}, 401)
     obj = model.query.filter_by(id=id).first()
     if not obj:
         raise NotFound(f"{model.__name__} {id} does not exist")
@@ -395,7 +373,8 @@ def check_name_exist(model, name, user_id):
     existing_name = model.query.filter_by(name=name, user_id=user_id).first()
     if existing_name:
         return make_response({"error": f"{model.__name__} '{name}' already exists for this user"}, 422)
-    
+
+# For request methods that require an attribute that needs to have it's user_id checked to make sure it matches user 
 def check_attr_user_id(model, user_id, id1):
     existing_attr = model.query.filter_by(id=id1).first()
     if existing_attr.user_id != user_id:
