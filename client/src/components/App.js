@@ -12,6 +12,7 @@ import Lists from "./lists/Lists";
 import CategoriesList from "./categories/CategoriesList";
 import Home from "./Home";
 import Landing from "./Landing";
+import LogoutButton from "./LogoutButton";
 
 function App() {
     const dispatch = useDispatch();
@@ -22,11 +23,12 @@ function App() {
         dispatch(checkSession());
     }, [dispatch]);
 
-    console.log(currentUser)
-
     return (
         <div className="App">
-            <header>Shopping Lists</header>
+            <header>
+                <div className="header-title">Shopping Lists</div>
+                {currentUser && <LogoutButton />} {/* Render LogoutButton if currentUser is available */}
+            </header>
             {currentUser ? (
                 <>
             <NavBar/>
