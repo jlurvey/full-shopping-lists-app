@@ -84,12 +84,6 @@ class Item(db.Model, SerializerMixin):
             raise ValueError("item name is required")
         if not isinstance(name, str) or not name.strip():
             raise ValueError("item name must be a non-empty string")
-        # existing_item = Item.query.filter(
-        #     db.func.lower(Item.name) == db.func.lower(name),
-        #     Item.user_id == self.user_id
-        # ).first()
-        # if existing_item and existing_item.id != self.id:
-        #     raise ValueError("item name already exists")
         return name
 
     @validates("category_id")
@@ -149,13 +143,7 @@ class Category(db.Model, SerializerMixin):
             raise ValueError("category name is requried")
         if not isinstance(name, str) or not name.strip():
             raise ValueError("category name must be a non-empty string")
-        # if self.user_id is None:
-        #     raise ValueError("User ID must be set before validating name")
-        # existing_category = Category.query.filter_by(name=name, user_id=self.user_id).first()
-        # if existing_category:
-        #     raise ValueError("category name already exists")
         return name
-
 
     def __repr__(self):
         return f"<Category {self.id}, {self.name}, User: {self.user.id}>"
@@ -183,12 +171,6 @@ class Store(db.Model, SerializerMixin):
             raise ValueError("store name is requried")
         if not isinstance(name, str) or not name.strip():
             raise ValueError("store name must be a non-empty string")
-        # existing_store = Store.query.filter(
-        #     db.func.lower(Store.name) == db.func.lower(name),
-        #     Store.user_id == self.user_id
-        # ).first()
-        # if existing_store and existing_store.id != self.id:
-        #     raise ValueError("store name already exists")
         return name
 
     @validates("user_id")
