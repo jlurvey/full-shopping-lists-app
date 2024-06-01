@@ -1,18 +1,34 @@
 //src/components/App.js
 
 import "../App.css"
+import React, {useEffect} from "react";
 import { Route, Switch } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { checkSession } from "../features/users/usersSlice";
 import NavBar from "./NavBar";
 import ItemsList from "./items/ItemsList";
 import StoresList from "./stores/StoresList";
 import Lists from "./lists/Lists";
 import CategoriesList from "./categories/CategoriesList";
 import Home from "./Home";
+import Landing from "./Landing";
 
 function App() {
+    const dispatch = useDispatch();
+    const currentUser = useSelector((state) => state.users.currentUser)
+
+    // Check session on component mount
+    useEffect(() => {
+        dispatch(checkSession());
+    }, [dispatch]);
+
+    console.log(currentUser)
+
     return (
         <div className="App">
             <header>Shopping Lists</header>
+            {currentUser ? (
+                <>
             <NavBar/>
             <Switch>
                 <Route path='/items'>
@@ -31,10 +47,12 @@ function App() {
                     <Home/>
                 </Route>
             </Switch>
-            
+            </>
+            ) : (
+                <Landing/>
+            )}
         </div>
-        
-    )
+    );
 }
 
 export default App;
