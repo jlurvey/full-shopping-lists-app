@@ -10,7 +10,6 @@ function AddItemForm({ items, categories }) {
 
     const dispatch = useDispatch();
 
-
     const initialValues = {
         name: "",
         category_id: categories.length > 0 ? categories[0].id : "",
