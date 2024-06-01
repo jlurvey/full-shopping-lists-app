@@ -49,7 +49,7 @@ export const checkSession = createAsyncThunk('users/checkSession', async () => {
 
 export const logout = createAsyncThunk('users/logout', async () => {
     try {
-        await axios.delete(`${API_URL}/delete`);
+        await axios.delete(`${API_URL}/logout`);
         return null
     } catch (error) {
         console.error(error.response.data);
