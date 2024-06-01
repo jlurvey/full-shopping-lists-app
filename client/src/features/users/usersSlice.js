@@ -15,6 +15,8 @@ const initialState = usersAdapter.getInitialState({
 
 const API_URL = 'http://localhost:5555'
 
+axios.defaults.withCredentials = true;
+
 export const signup = createAsyncThunk('users/signup', async (userData) => {
     try {
         const resp = await axios.post(`${API_URL}/signup`, userData)
