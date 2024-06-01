@@ -82,7 +82,7 @@ class ItemIndex(Resource):
     def post(self):
         user_id = session.get("user_id")
         data = request.get_json()
-        check_name_exist(Item, data["name"], user_id)
+        check_name_exist(Item, data, user_id)
         check_id(Category, data["category_id"], user_id)
         try:
             new_item = Item(
@@ -110,8 +110,8 @@ class ItemById(Resource):
         user_id = session.get("user_id")
         data = request.get_json()
         item = check_id(Item, id, user_id)
-        check_name_exist(Item, data["name"], user_id)
-        check_id(Category, data["category_id"], user_id)
+        check_name_exist(Item, data, user_id)
+        check_id(Category, item.category_id, user_id)
         try:
             for attr in data:
                 setattr(item, attr, data[attr])
@@ -145,7 +145,7 @@ class CategoryIndex(Resource):
     def post(self):
         user_id = session.get("user_id")
         data = request.get_json()
-        check_name_exist(Category, data["name"], user_id)
+        check_name_exist(Category, data, user_id)
         try:
             new_category = Category(name=data["name"],user_id=user_id)
             db.session.add(new_category)
@@ -167,7 +167,7 @@ class CategoryById(Resource):
         user_id = session.get("user_id")
         data = request.get_json()
         category = check_id(Category, id, user_id)
-        check_name_exist(Category, data["name"], user_id)
+        check_name_exist(Category, data, user_id)
         try:
             for attr in data:
                 setattr(category, attr, data[attr])
@@ -201,7 +201,7 @@ class StoreIndex(Resource):
     def post(self):
         user_id = session.get("user_id")
         data = request.get_json()
-        check_name_exist(Store, data["name"], user_id)
+        check_name_exist(Store, data, user_id)
         try:
             new_store = Store(name=data["name"], user_id=user_id)
             db.session.add(new_store)
@@ -223,7 +223,7 @@ class StoreById(Resource):
         user_id = session.get("user_id")
         data = request.get_json()
         store = check_id(Store, id, user_id)
-        check_name_exist(Store, data["name"], user_id)
+        check_name_exist(Store, data, user_id)
         try:
             for attr in data:
                 setattr(store, attr, data[attr])
@@ -292,8 +292,8 @@ class NoteById(Resource):
         user_id = session.get("user_id")
         data = request.get_json()
         note = check_id(Note, id, user_id)
-        check_id(Item, data["item_id"], user_id)
-        check_id(Store, data["store_id"], user_id)
+        check_id(Item, note.item_id, user_id)
+        check_id(Store, note.store_id, user_id)
         existing_note = Note.query.filter_by(
             item_id=data["item_id"],
             store_id=data["store_id"],
@@ -354,9 +354,17 @@ def handle_error(e):
 
 
 # For all ById resources, check id exists, return error message if not
-def check_id(model, id, user_id):
+def check_id(model, data, user_id):
     if user_id is None:
         raise Unauthorized("Unauthorized")
+    id = None
+    if isinstance(data, int):
+        id = data
+    elif isinstance(data, dict):
+        id_keys = ["id", "category_id", "item_id", "store_id"]
+        for key in id_keys:
+            if key in data:
+                id = data[key]
     obj = model.query.filter_by(id=id).first()
     if not obj:
         raise NotFound(f"{model.__name__} {id} does not exist")
@@ -365,12 +373,17 @@ def check_id(model, id, user_id):
     return obj
 
 # For all Post methods, check if name exists for user_id, return error message if not
-def check_name_exist(model, name, user_id):
+def check_name_exist(model, data, user_id):
     if user_id is None:
         raise Unauthorized("Unauthorized")
-    existing_name = model.query.filter(func.lower(model.name) == func.lower(name), model.user_id == user_id).first()
-    if existing_name:
-        raise UnprocessableEntity(f"{model.__name__} '{name}' already exists for this user")
+    print(data)
+    if "name" in data and data["name"]:
+        name = data["name"]
+        existing_name = model.query.filter(func.lower(model.name) == func.lower(name), model.user_id == user_id).first()
+        if existing_name:
+            raise UnprocessableEntity(f"{model.__name__} '{name}' already exists for this user")
+    else:
+        return
 
 # App level error handler for all HTTP errors
 @app.errorhandler(HTTPException)
