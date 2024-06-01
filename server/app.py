@@ -376,7 +376,6 @@ def check_id(model, data, user_id):
 def check_name_exist(model, data, user_id):
     if user_id is None:
         raise Unauthorized("Unauthorized")
-    print(data)
     if "name" in data and data["name"]:
         name = data["name"]
         existing_name = model.query.filter(func.lower(model.name) == func.lower(name), model.user_id == user_id).first()
