@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector  } from "react-redux";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { signup, login } from "../features/users/usersSlice";
@@ -8,6 +8,7 @@ function Landing() {
 
     const dispatch = useDispatch();
     const [isLogin, setIsLogin] = useState(true);
+    const { error } = useSelector((state) => state.users);
 
     const initialValues = {
         email: "",
@@ -26,15 +27,14 @@ function Landing() {
         };
         try {
             if (isLogin) {
-                await dispatch(login(userData));
+                await dispatch(login(userData)).unwrap();
             } else {
-                await dispatch(signup(userData));
-                await dispatch(login(userData));
+                await dispatch(signup(userData)).unwrap();
+                await dispatch(login(userData).unwrap());
             }
             // Handle successful login/signup, e.g., redirect to another page
         } catch (error) {
             console.error("Authentication failed:", error);
-            // Handle authentication error
         } finally {
             setSubmitting(false);
         }
@@ -67,6 +67,7 @@ function Landing() {
                                 {isSubmitting ? "Submitting..." : isLogin ? "Login" : "Sign Up"}
                             </button>
                         </div>
+                        {error && <div className="error">{error}</div>}
                     </Form>
                 )}
             </Formik>

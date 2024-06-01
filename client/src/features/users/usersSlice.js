@@ -17,43 +17,43 @@ const API_URL = 'http://localhost:5555'
 
 axios.defaults.withCredentials = true;
 
-export const signup = createAsyncThunk('users/signup', async (userData) => {
+export const signup = createAsyncThunk('users/signup', async (userData, { rejectWithValue }) => {
     try {
-        const resp = await axios.post(`${API_URL}/signup`, userData)
-        return resp.data
+        const resp = await axios.post(`${API_URL}/signup`, userData);
+        return resp.data;
     } catch (error) {
         console.error(error.response.data);
-        throw error.response.data;
+        return rejectWithValue(error.response.data.error);
     }
 });
 
-export const login = createAsyncThunk('users/login', async (userData) => {
+export const login = createAsyncThunk('users/login', async (userData, { rejectWithValue }) => {
     try {
-        const resp = await axios.post(`${API_URL}/login`, userData)
-        return resp.data
+        const resp = await axios.post(`${API_URL}/login`, userData);
+        return resp.data;
     } catch (error) {
         console.error(error.response.data);
-        throw error.response.data;
+        return rejectWithValue(error.response.data.error);
     }
 });
 
-export const checkSession = createAsyncThunk('users/checkSession', async () => {
+export const checkSession = createAsyncThunk('users/checkSession', async (_, { rejectWithValue }) => {
     try {
         const resp = await axios.get(`${API_URL}/check_session`);
         return resp.data;
     } catch (error) {
         console.error(error.response.data);
-        throw error.response.data;
+        return rejectWithValue(error.response.data.error);
     }
 });
 
-export const logout = createAsyncThunk('users/logout', async () => {
+export const logout = createAsyncThunk('users/logout', async (_, { rejectWithValue }) => {
     try {
         await axios.delete(`${API_URL}/logout`);
-        return null
+        return null;
     } catch (error) {
         console.error(error.response.data);
-        throw error.response.data;
+        return rejectWithValue(error.response.data.error);
     }
 });
 
@@ -77,7 +77,7 @@ const usersSlice = createSlice({
             })
             .addCase(signup.rejected, (state, action) => {
                 state.status = 'failed';
-                state.error = action.error.message;
+                state.error = action.payload || action.error.message;
             })
             .addCase(login.pending, (state) => {
                 state.status = 'loading';
@@ -88,7 +88,7 @@ const usersSlice = createSlice({
             })
             .addCase(login.rejected, (state, action) => {
                 state.status = 'failed';
-                state.error = action.error.message;
+                state.error = action.payload || action.error.message;
             })
             .addCase(checkSession.pending, (state) => {
                 state.status = 'loading';
@@ -99,7 +99,7 @@ const usersSlice = createSlice({
             })
             .addCase(checkSession.rejected, (state, action) => {
                 state.status = 'failed';
-                state.error = action.error.message;
+                state.error = action.payload || action.error.message;
             })
             .addCase(logout.pending, (state) => {
                 state.status = 'loading';
@@ -110,7 +110,7 @@ const usersSlice = createSlice({
             })
             .addCase(logout.rejected, (state, action) => {
                 state.status = 'failed';
-                state.error = action.error.message;
+                state.error = action.payload || action.error.message;
             });
     },
 });

@@ -286,3 +286,7 @@ button.logout {
     font-weight: bold;
     transition: color 0.3s;
 }
+
+.error {
+    color: red;
+}

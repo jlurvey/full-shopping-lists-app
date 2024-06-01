@@ -26,6 +26,9 @@ class Signup(Resource):
     def post(self):
         data = request.get_json()
         try:
+            existing_user = User.query.filter_by(email=data["email"]).first()
+            if existing_user:
+                raise ValueError("Email already exists")
             new_user = User(email=data["email"], password=data["password"])
             db.session.add(new_user)
             db.session.commit()
@@ -51,7 +54,8 @@ class Login(Resource):
         try:
             if user and user.check_password(password):
                 session["user_id"] = user.id
-                return make_response(user.to_dict(), 201)
+                return make_response(user.to_dict(), 200)
+            raise Unauthorized("Incorrect email or password")
         except Exception as e:
             db.session.rollback()
             return handle_error(e)
