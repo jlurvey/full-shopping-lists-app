@@ -6,7 +6,8 @@
 # Remote library imports
 from flask import jsonify, make_response, request, session
 from flask_restful import Resource
-from werkzeug.exceptions import BadRequest, HTTPException, NotFound
+from werkzeug.exceptions import BadRequest, HTTPException, NotFound, Unauthorized, Forbidden, UnprocessableEntity
+from sqlalchemy import func
 
 # Local imports
 from config import app, db, api
@@ -25,10 +26,7 @@ class Signup(Resource):
     def post(self):
         data = request.get_json()
         try:
-            new_user = User(
-                email=data["email"],
-                password=data["password"],
-            )
+            new_user = User(email=data["email"], password=data["password"])
             db.session.add(new_user)
             db.session.commit()
             return make_response(new_user.to_dict(), 201)
@@ -77,19 +75,15 @@ class ItemIndex(Resource):
     def get(self):
         user_id = session.get("user_id")
         if user_id is None:
-            return make_response(jsonify({"error": "Unauthorized"}), 401)
+            raise Unauthorized("Unauthorized")
         items = [item.to_dict() for item in Item.query.filter_by(user_id=user_id).order_by(Item.name).all()]
         return make_response(jsonify(items), 200)
 
     def post(self):
         user_id = session.get("user_id")
         data = request.get_json()
-        existing_name = check_name_exist(Item, data["name"], user_id)
-        if existing_name:
-            return existing_name
-        user_category_check = check_attr_user_id(Category, user_id, data["category_id"])
-        if user_category_check:
-            return user_category_check
+        check_name_exist(Item, data["name"], user_id)
+        check_id(Category, data["category_id"], user_id)
         try:
             new_item = Item(
                 name=data["name"],
@@ -109,12 +103,15 @@ class ItemById(Resource):
     def get(self, id):
         user_id = session.get("user_id")
         item = check_id(Item, id, user_id)
-        return make_response(jsonify(item.to_dict()), 200)
+        if item:
+            return make_response(item.to_dict(), 200)
 
     def patch(self, id):
         user_id = session.get("user_id")
-        item = check_id(Item, id, user_id)
         data = request.get_json()
+        item = check_id(Item, id, user_id)
+        check_name_exist(Item, data["name"], user_id)
+        check_id(Category, data["category_id"], user_id)
         try:
             for attr in data:
                 setattr(item, attr, data[attr])
@@ -141,21 +138,16 @@ class CategoryIndex(Resource):
     def get(self):
         user_id = session.get("user_id")
         if user_id is None:
-            return make_response(jsonify({"error": "Unauthorized"}), 401)
+            raise Unauthorized("Unauthorized")
         categories = [category.to_dict() for category in Category.query.filter_by(user_id=user_id).order_by(Category.name).all()]
         return make_response(jsonify(categories), 200)
 
     def post(self):
         user_id = session.get("user_id")
         data = request.get_json()
-        existing_name = check_name_exist(Category, data["name"], user_id)
-        if existing_name:
-            return existing_name
+        check_name_exist(Category, data["name"], user_id)
         try:
-            new_category = Category(
-                name=data["name"],
-                user_id=user_id
-                )
+            new_category = Category(name=data["name"],user_id=user_id)
             db.session.add(new_category)
             db.session.commit()
             return make_response(new_category.to_dict(), 201)
@@ -168,12 +160,14 @@ class CategoryById(Resource):
     def get(self, id):
         user_id = session.get("user_id")
         category = check_id(Category, id, user_id)
-        return make_response(jsonify(category.to_dict()), 200)
+        if category:
+            return make_response(category.to_dict(), 200)
 
     def patch(self, id):
         user_id = session.get("user_id")
-        category = check_id(Category, id, user_id)
         data = request.get_json()
+        category = check_id(Category, id, user_id)
+        check_name_exist(Category, data["name"], user_id)
         try:
             for attr in data:
                 setattr(category, attr, data[attr])
@@ -200,21 +194,16 @@ class StoreIndex(Resource):
     def get(self):
         user_id = session.get("user_id")
         if user_id is None:
-            return make_response(jsonify({"error": "Unauthorized"}), 401)
+            raise Unauthorized("Unauthorized")
         stores = [store.to_dict() for store in Store.query.filter_by(user_id=user_id).order_by(Store.name).all()]
         return make_response(jsonify(stores), 200)
 
     def post(self):
         user_id = session.get("user_id")
         data = request.get_json()
-        existing_name = check_name_exist(Store, data["name"], user_id)
-        if existing_name:
-            return existing_name
+        check_name_exist(Store, data["name"], user_id)
         try:
-            new_store = Store(
-                name=data["name"],
-                user_id=user_id
-                )
+            new_store = Store(name=data["name"], user_id=user_id)
             db.session.add(new_store)
             db.session.commit()
             return make_response(new_store.to_dict(), 201)
@@ -227,12 +216,14 @@ class StoreById(Resource):
     def get(self, id):
         user_id = session.get("user_id")
         store = check_id(Store, id, user_id)
-        return make_response(jsonify(store.to_dict()), 200)
+        if store:
+            return make_response(store.to_dict(), 200)
 
     def patch(self, id):
         user_id = session.get("user_id")
-        store = check_id(Store, id, user_id)
         data = request.get_json()
+        store = check_id(Store, id, user_id)
+        check_name_exist(Store, data["name"], user_id)
         try:
             for attr in data:
                 setattr(store, attr, data[attr])
@@ -259,27 +250,22 @@ class NoteIndex(Resource):
     def get(self):
         user_id = session.get("user_id")
         if user_id is None:
-            return make_response(jsonify({"error": "Unauthorized"}), 401)
+            raise Unauthorized("Unauthorized")
         notes = [note.to_dict() for note in Note.query.filter_by(user_id=user_id).all()]
         return make_response(jsonify(notes), 200)
 
     def post(self):
         user_id = session.get("user_id")
         data = request.get_json()
-        user_item_check = check_attr_user_id(Item, user_id, data["item_id"])
-        if user_item_check:
-            return user_item_check
-        user_store_check = check_attr_user_id(Store, user_id, data["store_id"])
-        if user_store_check:
-            return user_store_check        
+        check_id(Item, data["item_id"], user_id)
+        check_id(Store, data["store_id"], user_id)
         existing_note = Note.query.filter_by(
             item_id=data["item_id"],
             store_id=data["store_id"],
             user_id=user_id
         ).first()
         if existing_note:
-            return make_response({"error": "Note already exists for this item and store"},422)
-        
+            raise UnprocessableEntity(f"Note '{existing_note.id}' already exists for Item '{existing_note.item_id}' and Store '{existing_note.store_id}'")
         try:
             new_note = Note(
                 description=data["description"],
@@ -299,12 +285,22 @@ class NoteById(Resource):
     def get(self, id):
         user_id = session.get("user_id")
         note = check_id(Note, id, user_id)
-        return make_response(jsonify(note.to_dict()), 200)
+        if note:
+            return make_response(note.to_dict(), 200)
 
     def patch(self, id):
         user_id = session.get("user_id")
-        note = check_id(Note, id, user_id)
         data = request.get_json()
+        note = check_id(Note, id, user_id)
+        check_id(Item, data["item_id"], user_id)
+        check_id(Store, data["store_id"], user_id)
+        existing_note = Note.query.filter_by(
+            item_id=data["item_id"],
+            store_id=data["store_id"],
+            user_id=user_id
+        ).first()
+        if existing_note:
+            raise UnprocessableEntity(f"Note '{existing_note.id}' already exists for Item '{existing_note.item_id}' and Store '{existing_note.store_id}'")
         try:
             for attr in data:
                 setattr(note, attr, data[attr])
@@ -360,26 +356,21 @@ def handle_error(e):
 # For all ById resources, check id exists, return error message if not
 def check_id(model, id, user_id):
     if user_id is None:
-            return make_response({"error": "Unauthorized"}, 401)
+        raise Unauthorized("Unauthorized")
     obj = model.query.filter_by(id=id).first()
     if not obj:
         raise NotFound(f"{model.__name__} {id} does not exist")
+    if obj.user_id != user_id:
+        raise Forbidden(f"User {user_id} is not authorized to use {model.__name__} '{id}'")
     return obj
 
 # For all Post methods, check if name exists for user_id, return error message if not
 def check_name_exist(model, name, user_id):
     if user_id is None:
-            return make_response({"error": "Unauthorized"}, 401)
-    existing_name = model.query.filter_by(name=name, user_id=user_id).first()
+        raise Unauthorized("Unauthorized")
+    existing_name = model.query.filter(func.lower(model.name) == func.lower(name), model.user_id == user_id).first()
     if existing_name:
-        return make_response({"error": f"{model.__name__} '{name}' already exists for this user"}, 422)
-
-# For request methods that require an attribute that needs to have it's user_id checked to make sure it matches user 
-def check_attr_user_id(model, user_id, id1):
-    existing_attr = model.query.filter_by(id=id1).first()
-    if existing_attr.user_id != user_id:
-        return make_response({"error": f"User {user_id} is not authorized to use {model.__name__} '{id1}'"})
-
+        raise UnprocessableEntity(f"{model.__name__} '{name}' already exists for this user")
 
 # App level error handler for all HTTP errors
 @app.errorhandler(HTTPException)
