@@ -1,10 +1,10 @@
 :root {
-    --lightblue: rgb(200, 233, 255);
     --lightorange: rgb(255, 220, 114);
     --orange: rgb(255, 150, 78);
+    --darkorange: rgb(255, 77, 39);
+    --lightblue: rgb(200, 233, 255);
     --blue: rgb(0, 33, 165);
     --darkblue: rgb(0, 17, 83);
-
     --lightgray: rgb(225, 225, 225);
     --gray: rgb(150, 150, 150);
     --darkgray: rgb(75, 75, 75)
