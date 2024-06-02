@@ -327,18 +327,18 @@ class NoteById(Resource):
             return handle_error(e)
 
 
-api.add_resource(Signup, "/signup", endpoint = "signup")
-api.add_resource(CheckSession, '/check_session', endpoint='check_session')
-api.add_resource(Login, '/login', endpoint='login')
-api.add_resource(Logout, '/logout', endpoint='logout')
-api.add_resource(ItemIndex, "/items", endpoint="items")
-api.add_resource(ItemById, "/items/<int:id>", endpoint="items/<int:id>")
-api.add_resource(StoreIndex, "/stores", endpoint="stores")
-api.add_resource(StoreById, "/stores/<int:id>", endpoint="stores/<int:id>")
-api.add_resource(NoteIndex, "/notes", endpoint="notes")
-api.add_resource(NoteById, "/notes/<int:id>", endpoint="notes/<int:id>")
-api.add_resource(CategoryIndex, "/categories", endpoint="categories")
-api.add_resource(CategoryById, "/categories/<int:id>", endpoint="categories/<int:id>")
+api.add_resource(Signup, "/api/signup", endpoint = "signup")
+api.add_resource(CheckSession, '/api/check_session', endpoint='check_session')
+api.add_resource(Login, '/api/login', endpoint='login')
+api.add_resource(Logout, '/api/logout', endpoint='logout')
+api.add_resource(ItemIndex, "/api/items", endpoint="items")
+api.add_resource(ItemById, "/api/items/<int:id>", endpoint="items/<int:id>")
+api.add_resource(StoreIndex, "/api/stores", endpoint="stores")
+api.add_resource(StoreById, "/api/stores/<int:id>", endpoint="stores/<int:id>")
+api.add_resource(NoteIndex, "/api/notes", endpoint="notes")
+api.add_resource(NoteById, "/api/notes/<int:id>", endpoint="notes/<int:id>")
+api.add_resource(CategoryIndex, "/api/categories", endpoint="categories")
+api.add_resource(CategoryById, "/api/categories/<int:id>", endpoint="categories/<int:id>")
 
 
 # Handles BadRequests, KeyErrors, ValueErrors
