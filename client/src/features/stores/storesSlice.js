@@ -8,7 +8,7 @@ const storesAdapter = createEntityAdapter({
     selectId: store => store.id,
 });
 
-const initialState = storesAdapter.getInitialState({
+export const initialState = storesAdapter.getInitialState({
     status: 'idle',
     error: null,
     selectedStore: null,

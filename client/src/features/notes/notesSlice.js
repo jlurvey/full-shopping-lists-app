@@ -8,7 +8,7 @@ const notesAdapter = createEntityAdapter({
     selectId: note => note.id,
 });
 
-const initialState = notesAdapter.getInitialState({
+export const initialState = notesAdapter.getInitialState({
     status: 'idle',
     error: null,
 });

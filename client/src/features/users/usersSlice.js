@@ -7,7 +7,7 @@ const usersAdapter = createEntityAdapter({
     selectId: user => user.id
 })
 
-const initialState = usersAdapter.getInitialState({
+export const initialState = usersAdapter.getInitialState({
     status: 'idle',
     error: null,
     currentUser: null
@@ -63,7 +63,8 @@ const usersSlice = createSlice({
     reducers: {
         setCurrentUser: (state, action) => {
             state.currentUser = action.payload
-        }
+        },
+        resetState: () => initialState
     },
     extraReducers: (builder) => {
         builder
@@ -119,4 +120,4 @@ export default usersSlice.reducer;
 
 export const { selectAll: selectAllUsers, selectById: selectUserById } = usersAdapter.getSelectors((state) => state.users);
 
-export const { setCurrentUser } = usersSlice.actions
+export const { setCurrentUser, resetState  } = usersSlice.actions

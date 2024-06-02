@@ -7,7 +7,7 @@ const itemsAdapter = createEntityAdapter({
     selectId: item => item.id
 });
 
-const initialState = itemsAdapter.getInitialState({
+export const initialState = itemsAdapter.getInitialState({
     status: 'idle',
     error: null,
 });

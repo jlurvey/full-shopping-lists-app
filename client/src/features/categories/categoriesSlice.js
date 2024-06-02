@@ -8,7 +8,7 @@ const categoriesAdapter = createEntityAdapter({
     selectId: category => category.id
 });
 
-const initialState = categoriesAdapter.getInitialState({
+export const initialState = categoriesAdapter.getInitialState({
     status: 'idle',
     error: null,
 });
