@@ -17,9 +17,9 @@ if __name__ == "__main__":
 
     with app.app_context():
         print("Deleting all records...")
+        Note.query.delete()
         Item.query.delete()
         Store.query.delete()
-        Note.query.delete()
         Category.query.delete()
         User.query.delete()
 
