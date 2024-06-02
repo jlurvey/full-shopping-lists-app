@@ -30,7 +30,7 @@ function Landing() {
                 await dispatch(login(userData)).unwrap();
             } else {
                 await dispatch(signup(userData)).unwrap();
-                await dispatch(login(userData).unwrap());
+                await dispatch(login(userData)).unwrap();
             }
             // Handle successful login/signup, e.g., redirect to another page
         } catch (error) {
