@@ -14,7 +14,7 @@ export const initialState = storesAdapter.getInitialState({
     selectedStore: null,
 });
 
-const API_URL = 'http://localhost:5555'
+const API_URL = 'http://localhost:5555/api'
 
 export const fetchStores = createAsyncThunk('stores/fetchStores', async () => {
     const resp = await axios.get(`${API_URL}/stores`);
