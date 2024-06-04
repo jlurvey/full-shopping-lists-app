@@ -4,7 +4,7 @@
 # Standard library imports
 
 # Remote library imports
-from flask import jsonify, make_response, request, session
+from flask import jsonify, make_response, request, session, render_template
 from flask_restful import Resource
 from werkzeug.exceptions import BadRequest, HTTPException, NotFound, Unauthorized, Forbidden, UnprocessableEntity
 from sqlalchemy import func
@@ -17,10 +17,10 @@ from models import Item, Store, Note, Category, User
 
 
 # Views go here!
-@app.route("/")
-def index():
-    return "<h1>Project Server</h1>"
-
+@app.route('/')
+@app.route('/<int:id>')
+def index(id=0):
+    return render_template("index.html")
 
 class Signup(Resource):
     def post(self):

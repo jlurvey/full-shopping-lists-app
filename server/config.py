@@ -19,7 +19,13 @@ from redis import Redis
 
 
 # Instantiate app, set attributes
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    static_url_path='',
+    static_folder='../client/build',
+    template_folder='../client/build'
+)
+
 app.secret_key = os.urandom(24)
 
 # Configure Redis connection
