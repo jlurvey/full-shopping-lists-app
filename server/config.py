@@ -14,10 +14,21 @@ from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 from flask_bcrypt import Bcrypt
+from flask_session import Session
+from redis import Redis
+
 
 # Instantiate app, set attributes
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
+
+# Configure Redis connection
+redis = Redis(host='localhost', port=6379)
+
+# Use Redis for session storage
+app.config['SESSION_TYPE'] = 'redis'
+app.config['SESSION_REDIS'] = redis
+
 # app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get('DATABASE_URI')
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -40,3 +51,6 @@ api = Api(app)
 
 # Instantiate CORS
 CORS(app, supports_credentials=True, origins='*')
+
+# Initialize Flask-Session
+Session(app)
