@@ -43,7 +43,10 @@ class CheckSession(Resource):
         user_id = session.get("user_id")
         if user_id:
             user = User.query.filter(User.id == user_id).first()
-            return make_response(jsonify(user.to_dict()), 200)
+            return make_response(user.to_dict(), 200)
+        # else:
+        #     print("No user_id in session")
+        #     return make_response({"error": "No active session"}, 401)
         
         
 class Login(Resource):
