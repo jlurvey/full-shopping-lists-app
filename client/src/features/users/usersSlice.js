@@ -13,7 +13,8 @@ export const initialState = usersAdapter.getInitialState({
     currentUser: null
 })
 
-const API_URL = 'http://localhost:5555/api'
+const API_URL = '/api'
+// const API_URL = 'http://localhost:5555/api'
 
 axios.defaults.withCredentials = true;
 

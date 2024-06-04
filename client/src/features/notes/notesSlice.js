@@ -13,7 +13,8 @@ export const initialState = notesAdapter.getInitialState({
     error: null,
 });
 
-const API_URL = 'http://localhost:5555/api'
+const API_URL = '/api'
+// const API_URL = 'http://localhost:5555/api'
 
 export const fetchNotes = createAsyncThunk('notes/fetchNotes', async () => {
     const resp = await axios.get(`${API_URL}/notes`)

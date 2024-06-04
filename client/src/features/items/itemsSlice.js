@@ -12,7 +12,8 @@ export const initialState = itemsAdapter.getInitialState({
     error: null,
 });
 
-const API_URL = 'http://localhost:5555/api'
+const API_URL = '/api'
+// const API_URL = 'http://localhost:5555/api'
 
 export const fetchItems = createAsyncThunk('items/fetchItems', async () => {
     const resp = await axios.get(`${API_URL}/items`)
