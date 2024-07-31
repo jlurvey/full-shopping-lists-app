@@ -20,9 +20,9 @@ from models import Item, Store, Note, Category, User
 @app.route('/')
 @app.route('/<path:path>')
 def index(path=''):
-    if path and path.startswith('api'):
-        return '', 404
-    return render_template('index.html')
+    if path and not path.startswith('api'):
+        return render_template('index.html')
+    
 
 class Signup(Resource):
     def post(self):
